@@ -1,0 +1,36 @@
+<section data-ng-controller="WholeTeamListsController">
+    <div class="page-header">
+        <h1>Paid</h1>
+    </div>
+
+    <div class="pull-right">
+      <a type="button" class="btn btn-success" href="/#!/whole-team-lists/create">
+        <i class="glyphicon glyphicon-open"></i> New WholeTeamList
+      </a>
+    </div>
+
+    <div>
+        <table ng-table="tableParams"  class="table ng-table-responsive" show-filter="true">
+            <tr ng-repeat="wholeTeamList in $data" ng-class="{ 'emphasis': wholeTeamList.Paid == 'No' }">
+                <td data-title="'Name'" sortable="'Name'" filter="{ 'Name': 'text' }">{{wholeTeamList.Name}}</td>
+                <td data-title="'Committee'" sortable="'Committee'" filter="{ 'Committee': 'text' }">{{wholeTeamList.Committee}}</td>
+                <td data-title="'Paid'" sortable="'Paid'" filter="{ 'Paid': 'text' }">{{wholeTeamList.Paid}}</td>
+                <td data-title="'PaidAmount'" sortable="'PaidAmount'" filter="{ 'PaidAmount': 'text' }">{{wholeTeamList.PaidAmount}}</td>
+                <td data-title="'Roommate'" sortable="'Roommate'" filter="{ 'Roommate': 'text' }">{{wholeTeamList.Roommate}}</td>
+                <td data-title="'Building'" sortable="'Building'" filter="{ 'Building': 'text' }">{{wholeTeamList.Building}}</td>
+                <td>
+                    <div class="table-actions">
+                <td>
+                   <div class="table-actions">
+                        <a class="btn btn-default" title="View" href="/#!/whole-team-lists/{{wholeTeamList._id}}">
+                            <span class="glyphicon glyphicon-eye-open"></span>
+                        </a>
+                        <a class="btn btn-default" title="Edit" href="/#!/whole-team-lists/{{wholeTeamList._id}}/edit">
+                            <span class="glyphicon glyphicon-edit"></span>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+</section>

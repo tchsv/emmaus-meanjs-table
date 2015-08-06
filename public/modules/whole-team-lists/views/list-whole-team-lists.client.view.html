@@ -1,0 +1,47 @@
+<section data-ng-controller="WholeTeamListsController">
+    <div class="page-header">
+        <h1>Whole Team</h1>
+    </div>
+
+    <div class="pull-right">
+      <a type="button" class="btn btn-success" href="/#!/whole-team-lists/create">
+        <i class="glyphicon glyphicon-open"></i> New WholeTeamList
+      </a>
+    </div>
+
+    <div>
+        <table ng-table="tableParams" class="ng-table-responsive" show-filter="true">
+            <tr ng-repeat="wholeTeamList in $data">
+                <td data-title="'Name'" sortable="'Name'" filter="{ 'Name': 'text' }">{{wholeTeamList.Name}}</td>
+                <td data-title="'Committee'" sortable="'Committee'" filter="{ 'Committee': 'text' }">{{wholeTeamList.Committee}}</td>
+                <td data-title="'Chairperson'" sortable="'Chairperson'" filter="{ 'Chairperson': 'text' }">{{wholeTeamList.Chairperson}}</td>
+                <td data-title="'Talk'" sortable="'Talk'" filter="{ 'Talk': 'text' }">{{wholeTeamList.Talk}}</td>
+                <td data-title="'Phone'" sortable="'Phone'" filter="{ 'Phone': 'text' }">{{wholeTeamList.Phone}}</td>
+                <td data-title="'Email'" sortable="'Email'" filter="{ 'Email': 'text' }">{{wholeTeamList.Email}}</td>
+                <td data-title="'Street Address'" >{{wholeTeamList.Street_Address}}</td>
+                <td data-title="'City,State,Zip'"  >{{wholeTeamList.City_State_Zip}}</td>
+                <td data-title="'Paid'" sortable="'Paid'" filter="{ 'Paid': 'text' }">{{wholeTeamList.Paid}}</td>
+                <td data-title="'PaidAmount'" sortable="'PaidAmount'" filter="{ 'PaidAmount': 'text' }">{{wholeTeamList.PaidAmount}}</td>
+                <td data-title="'Roommate'" sortable="'Roommate'" filter="{ 'Roommate': 'text' }">{{wholeTeamList.Roommate}}</td>
+                <td data-title="'Building'" sortable="'Building'" filter="{ 'Building': 'text' }">{{wholeTeamList.Building}}</td>
+                <td>
+                    <div class="table-actions">
+                <td>
+                   <div class="table-actions">
+                        <a class="btn btn-default" title="View" href="/#!/whole-team-lists/{{wholeTeamList._id}}">
+                            <span class="glyphicon glyphicon-eye-open"></span>
+                        </a>
+                        <a class="btn btn-default" title="Edit" href="/#!/whole-team-lists/{{wholeTeamList._id}}/edit">
+                            <span class="glyphicon glyphicon-edit"></span>
+                        </a>
+                        <a class="btn btn-danger" title="Remove" ng-really-message="Are you sure ?" ng-really-click="remove(wholeTeamList)" item="wholeTeamList">
+                  				<span class="glyphicon glyphicon-remove-circle"></span>
+                  			</a>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <!--<a class="btn btn-primary"  ng-csv="{{ wholeTeamList }}" filename="testBubba.csv">Export to CSV</a>-->
+
+</section>
