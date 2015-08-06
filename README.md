@@ -1,3 +1,5 @@
+#This application has been created to help me manage the information used in a Walk to Emmaus retreat.  Below is the boiler plate information used to build and start the application.   
+
 [![MEAN.JS Logo](http://meanjs.org/img/logo-small.png)](http://meanjs.org/)
 
 [![Build Status](https://travis-ci.org/meanjs/mean.svg?branch=master)](https://travis-ci.org/meanjs/mean)
