@@ -820,10 +820,13 @@ angular.module('whole-team-lists').factory('WholeTeamLists', ['$resource',
           },
           {
             key: 'Paid',
-            type: 'input',
+            type: 'radio',
             templateOptions: {
               label: 'Paid:',
-              disabled: disabled
+              disabled: disabled,
+              options : [{name:"Yes", value:"Yes"},
+                {name:"No", value:"No"},
+              ]
             }
           },
           {
@@ -839,15 +842,19 @@ angular.module('whole-team-lists').factory('WholeTeamLists', ['$resource',
             type: 'input',
             templateOptions: {
               label: 'Roommate:',
-              disabled: disabled
+              disabled: disabled,
             }
           },
           {
             key: 'Building',
-            type: 'input',
+            type: 'select',
             templateOptions: {
               label: 'Building:',
-              disabled: disabled
+              disabled: disabled,
+              options : [{name:"Retreat Center", value:"Retreat Center"},
+                {name:"Campers", value:"Campers"},
+                {name:"None", value:"None"},
+                {name:"Main Lodge - East Wing", value:"Main Lodge - East Wing"}]
             }
           },
 

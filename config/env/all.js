@@ -28,6 +28,7 @@ module.exports = {
 				'public/lib/api-check/dist/apiCheck.min.js',
 				'public/lib/angular-formly/dist/formly.min.js',
 				'public/lib/angular-formly-templates-bootstrap/dist/angular-formly-templates-bootstrap.min.js'
+					//TODO if you need to add lib assets put them here please...
 			]
 		},
 		css: [

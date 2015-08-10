@@ -19,6 +19,7 @@
     "angular-formly-templates-bootstrap": "~4.0.3"
   },
   "resolutions": {
-    "angular": ">=1.2.x"
+    "angular": ">=1.2.x",
+    "api-check": "^7.0.0"
   }
 }
