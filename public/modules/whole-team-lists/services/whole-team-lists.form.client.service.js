@@ -27,6 +27,45 @@
             }
           },
           {
+            key: 'Paid',
+            type: 'radio',
+            templateOptions: {
+              label: 'Paid:',
+              disabled: disabled,
+              options : [{name:"Yes", value:"Yes"},
+                {name:"No", value:"No"},
+              ]
+            }
+          },
+          {
+            key: 'PaidAmount',
+            type: 'input',
+            templateOptions: {
+              label: 'Paid Amount:',
+              disabled: disabled
+            }
+          },
+          {
+            key: 'Roommate',
+            type: 'input',
+            templateOptions: {
+              label: 'Roommate:',
+              disabled: disabled,
+            }
+          },
+          {
+            key: 'Building',
+            type: 'select',
+            templateOptions: {
+              label: 'Building:',
+              disabled: disabled,
+              options : [{name:"Retreat Center", value:"Retreat Center"},
+                {name:"Campers", value:"Campers"},
+                {name:"None", value:"None"},
+                {name:"Main Lodge - East Wing", value:"Main Lodge - East Wing"}]
+            }
+          },
+          {
             key: 'Chairperson',
             type: 'input',
             templateOptions: {
@@ -72,45 +111,6 @@
             templateOptions: {
               label: 'City, State, Zip:',
               disabled: disabled
-            }
-          },
-          {
-            key: 'Paid',
-            type: 'radio',
-            templateOptions: {
-              label: 'Paid:',
-              disabled: disabled,
-              options : [{name:"Yes", value:"Yes"},
-                {name:"No", value:"No"},
-              ]
-            }
-          },
-          {
-            key: 'PaidAmount',
-            type: 'input',
-            templateOptions: {
-              label: 'Paid Amount:',
-              disabled: disabled
-            }
-          },
-          {
-            key: 'Roommate',
-            type: 'input',
-            templateOptions: {
-              label: 'Roommate:',
-              disabled: disabled,
-            }
-          },
-          {
-            key: 'Building',
-            type: 'select',
-            templateOptions: {
-              label: 'Building:',
-              disabled: disabled,
-              options : [{name:"Retreat Center", value:"Retreat Center"},
-                {name:"Campers", value:"Campers"},
-                {name:"None", value:"None"},
-                {name:"Main Lodge - East Wing", value:"Main Lodge - East Wing"}]
             }
           },
 

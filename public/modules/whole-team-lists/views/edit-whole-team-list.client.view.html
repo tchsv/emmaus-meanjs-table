@@ -4,6 +4,14 @@
     </div>
     <div class="col-md-12">
         <form class="form-horizontal" data-ng-submit="update()" novalidate>
+            <div class="form-group">
+                <button type="submit" class="btn btn-success">
+                    <i class="glyphicon glyphicon-ok"></i> Save
+                </button>
+                <a class="btn btn-danger" href="/#!/wholeTeamLists">
+                    <i class="glyphicon glyphicon-remove"></i> Cancel
+                </a>
+            </div>
 
           <formly-form model="wholeTeamList" fields="formFields">
     			</formly-form>
