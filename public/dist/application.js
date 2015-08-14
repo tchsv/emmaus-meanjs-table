@@ -49,6 +49,11 @@ ApplicationConfiguration.registerModule('core');
 'use strict';
 
 // Use application configuration module to register a new module
+ApplicationConfiguration.registerModule('pilgrims', ['core']);
+
+'use strict';
+
+// Use application configuration module to register a new module
 ApplicationConfiguration.registerModule('users');
 
 'use strict';
@@ -338,12 +343,12 @@ angular.module('core').service('Menus', [
 
       var params = {
         page: 1,
-        count: 5
+        count: 999
       };
 
       var settings = {
         total: 0,
-        counts: [5, 10, 15],
+        counts: [5, 10, 15, 999],
         filterDelay: 0,
       };
 
@@ -358,6 +363,163 @@ angular.module('core').service('Menus', [
 
       var service = {
         getParams: getParams
+      };
+
+      return service;
+
+  }
+
+})();
+
+'use strict';
+
+// Configuring the new module
+angular.module('pilgrims').run(['Menus',
+	function(Menus) {
+		// Set top bar menu items
+		Menus.addMenuItem('topbar', 'Pilgrims', 'pilgrims', 'dropdown', '/pilgrims(/create)?');
+		Menus.addSubMenuItem('topbar', 'pilgrims', 'List Pilgrims', 'pilgrims');
+		Menus.addSubMenuItem('topbar', 'pilgrims', 'New Pilgrim', 'pilgrims/create');
+	}
+]);
+
+'use strict';
+
+//Setting up route
+angular.module('pilgrims').config(['$stateProvider',
+	function($stateProvider) {
+		// Pilgrims state routing
+		$stateProvider.
+		state('listPilgrims', {
+			url: '/pilgrims',
+			templateUrl: 'modules/pilgrims/views/list-pilgrims.client.view.html'
+		}).
+		state('createPilgrim', {
+			url: '/pilgrims/create',
+			templateUrl: 'modules/pilgrims/views/create-pilgrim.client.view.html'
+		}).
+		state('viewPilgrim', {
+			url: '/pilgrims/:pilgrimId',
+			templateUrl: 'modules/pilgrims/views/view-pilgrim.client.view.html'
+		}).
+		state('editPilgrim', {
+			url: '/pilgrims/:pilgrimId/edit',
+			templateUrl: 'modules/pilgrims/views/edit-pilgrim.client.view.html'
+		});
+	}
+]);
+'use strict';
+
+// Pilgrims controller
+angular.module('pilgrims').controller('PilgrimsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Pilgrims', 'TableSettings', 'PilgrimsForm',
+	function($scope, $stateParams, $location, Authentication, Pilgrims, TableSettings, PilgrimsForm ) {
+		$scope.authentication = Authentication;
+		$scope.tableParams = TableSettings.getParams(Pilgrims);
+		$scope.pilgrim = {};
+
+		$scope.setFormFields = function(disabled) {
+			$scope.formFields = PilgrimsForm.getFormFields(disabled);
+		};
+
+
+		// Create new Pilgrim
+		$scope.create = function() {
+			var pilgrim = new Pilgrims($scope.pilgrim);
+
+			// Redirect after save
+			pilgrim.$save(function(response) {
+				$location.path('pilgrims/' + response._id);
+			}, function(errorResponse) {
+				$scope.error = errorResponse.data.message;
+			});
+		};
+
+		// Remove existing Pilgrim
+		$scope.remove = function(pilgrim) {
+
+			if ( pilgrim ) {
+				pilgrim = Pilgrims.get({pilgrimId:pilgrim._id}, function() {
+					pilgrim.$remove();
+					$scope.tableParams.reload();
+				});
+
+			} else {
+				$scope.pilgrim.$remove(function() {
+					$location.path('pilgrims');
+				});
+			}
+
+		};
+
+		// Update existing Pilgrim
+		$scope.update = function() {
+			var pilgrim = $scope.pilgrim;
+
+			pilgrim.$update(function() {
+				$location.path('pilgrims/' + pilgrim._id);
+			}, function(errorResponse) {
+				$scope.error = errorResponse.data.message;
+			});
+		};
+
+
+
+		$scope.toViewPilgrim = function() {
+			$scope.pilgrim = Pilgrims.get( {pilgrimId: $stateParams.pilgrimId} );
+			$scope.setFormFields(true);
+		};
+
+		$scope.toEditPilgrim = function() {
+			$scope.pilgrim = Pilgrims.get( {pilgrimId: $stateParams.pilgrimId} );
+			$scope.setFormFields(false);
+		};
+
+	}
+
+]);
+
+'use strict';
+
+//Pilgrims service used to communicate Pilgrims REST endpoints
+angular.module('pilgrims').factory('Pilgrims', ['$resource',
+	function($resource) {
+		return $resource('pilgrims/:pilgrimId', { pilgrimId: '@_id'
+		}, {
+			update: {
+				method: 'PUT'
+			}
+		});
+	}
+]);
+(function() {
+    'use strict';
+
+    angular
+        .module('pilgrims')
+        .factory('PilgrimsForm', factory);
+
+    function factory() {
+
+      var getFormFields = function(disabled) {
+
+        var fields = [
+  				{
+  					key: 'name',
+  					type: 'input',
+  					templateOptions: {
+  			      label: 'Name:',
+  						disabled: disabled
+  			    }
+  				}
+
+  			];
+
+        return fields;
+
+      };
+
+      var service = {
+        getFormFields: getFormFields
       };
 
       return service;
@@ -622,10 +784,12 @@ angular.module('users').factory('Users', ['$resource',
 angular.module('whole-team-lists').run(['Menus',
 	function(Menus) {
 		// Set top bar menu items
-		Menus.addMenuItem('topbar', 'Whole team lists', 'whole-team-lists', 'dropdown', '/whole-team-lists(/create)?');
+		Menus.addMenuItem('topbar', 'Whole', 'whole-team-lists', 'button', '/whole-team-lists');
 		Menus.addSubMenuItem('topbar', 'whole-team-lists', 'List Whole team lists', 'whole-team-lists');
 		Menus.addSubMenuItem('topbar', 'whole-team-lists', 'List Paid team lists', 'paid-team-lists');
 		//Menus.addSubMenuItem('topbar', 'whole-team-lists', 'New Whole team list', 'whole-team-lists/create');
+		Menus.addMenuItem('topbar', 'Paid', 'paid-team-lists', 'button', '/paid-team-lists');
+		Menus.addMenuItem('topbar', 'Summary', 'paid-team-summary-lists', 'button', '/paid-team-summary-lists');
 	}
 ]);
 
@@ -633,30 +797,34 @@ angular.module('whole-team-lists').run(['Menus',
 
 //Setting up route
 angular.module('whole-team-lists').config(['$stateProvider',
-	function($stateProvider) {
-		// Whole team lists state routing
-		$stateProvider.
-		state('listWholeTeamLists', {
-			url: '/whole-team-lists',
-			templateUrl: 'modules/whole-team-lists/views/list-whole-team-lists.client.view.html'
-		}).
-		state('listPaidTeamLists', {
-			url: '/paid-team-lists',
-			templateUrl: 'modules/whole-team-lists/views/list-paid-team-lists.client.view.html'
-		}).
-		state('createWholeTeamList', {
-			url: '/whole-team-lists/create',
-			templateUrl: 'modules/whole-team-lists/views/create-whole-team-list.client.view.html'
-		}).
-		state('viewWholeTeamList', {
-			url: '/whole-team-lists/:wholeTeamListId',
-			templateUrl: 'modules/whole-team-lists/views/view-whole-team-list.client.view.html'
-		}).
-		state('editWholeTeamList', {
-			url: '/whole-team-lists/:wholeTeamListId/edit',
-			templateUrl: 'modules/whole-team-lists/views/edit-whole-team-list.client.view.html'
-		});
-	}
+    function ($stateProvider) {
+        // Whole team lists state routing
+        $stateProvider.
+            state('listWholeTeamLists', {
+                url: '/whole-team-lists',
+                templateUrl: 'modules/whole-team-lists/views/list-whole-team-lists.client.view.html'
+            }).
+            state('listPaidTeamLists', {
+                url: '/paid-team-lists',
+                templateUrl: 'modules/whole-team-lists/views/list-paid-team-lists.client.view.html'
+            }).
+            state('listPaidTeamSummaryLists', {
+                url: '/paid-team-summary-lists',
+                templateUrl: 'modules/whole-team-lists/views/list-paid-team-summary-lists.client.view.html'
+            }).
+            state('createWholeTeamList', {
+                url: '/whole-team-lists/create',
+                templateUrl: 'modules/whole-team-lists/views/create-whole-team-list.client.view.html'
+            }).
+            state('viewWholeTeamList', {
+                url: '/whole-team-lists/:wholeTeamListId',
+                templateUrl: 'modules/whole-team-lists/views/view-whole-team-list.client.view.html'
+            }).
+            state('editWholeTeamList', {
+                url: '/whole-team-lists/:wholeTeamListId/edit',
+                templateUrl: 'modules/whole-team-lists/views/edit-whole-team-list.client.view.html'
+            });
+    }
 ]);
 
 'use strict';
@@ -771,6 +939,45 @@ angular.module('whole-team-lists').factory('WholeTeamLists', ['$resource',
             }
           },
           {
+            key: 'Paid',
+            type: 'radio',
+            templateOptions: {
+              label: 'Paid:',
+              disabled: disabled,
+              options : [{name:"Yes", value:"Yes"},
+                {name:"No", value:"No"},
+              ]
+            }
+          },
+          {
+            key: 'PaidAmount',
+            type: 'input',
+            templateOptions: {
+              label: 'Paid Amount:',
+              disabled: disabled
+            }
+          },
+          {
+            key: 'Roommate',
+            type: 'input',
+            templateOptions: {
+              label: 'Roommate:',
+              disabled: disabled,
+            }
+          },
+          {
+            key: 'Building',
+            type: 'select',
+            templateOptions: {
+              label: 'Building:',
+              disabled: disabled,
+              options : [{name:"Retreat Center", value:"Retreat Center"},
+                {name:"Campers", value:"Campers"},
+                {name:"None", value:"None"},
+                {name:"Main Lodge - East Wing", value:"Main Lodge - East Wing"}]
+            }
+          },
+          {
             key: 'Chairperson',
             type: 'input',
             templateOptions: {
@@ -816,45 +1023,6 @@ angular.module('whole-team-lists').factory('WholeTeamLists', ['$resource',
             templateOptions: {
               label: 'City, State, Zip:',
               disabled: disabled
-            }
-          },
-          {
-            key: 'Paid',
-            type: 'radio',
-            templateOptions: {
-              label: 'Paid:',
-              disabled: disabled,
-              options : [{name:"Yes", value:"Yes"},
-                {name:"No", value:"No"},
-              ]
-            }
-          },
-          {
-            key: 'PaidAmount',
-            type: 'input',
-            templateOptions: {
-              label: 'Paid Amount:',
-              disabled: disabled
-            }
-          },
-          {
-            key: 'Roommate',
-            type: 'input',
-            templateOptions: {
-              label: 'Roommate:',
-              disabled: disabled,
-            }
-          },
-          {
-            key: 'Building',
-            type: 'select',
-            templateOptions: {
-              label: 'Building:',
-              disabled: disabled,
-              options : [{name:"Retreat Center", value:"Retreat Center"},
-                {name:"Campers", value:"Campers"},
-                {name:"None", value:"None"},
-                {name:"Main Lodge - East Wing", value:"Main Lodge - East Wing"}]
             }
           },
 
