@@ -12,7 +12,27 @@
     <div>
         <table ng-table="tableParams" show-filter="true">
             <tr ng-repeat="pilgrim in $data">
-                <td data-title="'Name'" sortable="'name'" filter="{ 'name': 'text' }">{{pilgrim.name}}</td>
+                <!-- /**
+ * Pilgrim Schema
+ * FirstName    LastName    Street_Address    City_State_Zip    Church    Age    Special
+ * Room_Mate1    Room_Mate2    Paid    Amount_Paid    Amount_Due    CheckNumber    RoomNumber    HomeCluster
+ */
+-->
+                <td data-title="'FirstName'" sortable="'FirstName'" filter="{ 'FirstName': 'text' }">{{pilgrim.FirstName}}</td>
+                <td data-title="'LastName'" sortable="'LastName'" filter="{ 'LastName': 'text' }">{{pilgrim.LastName}}</td>
+                <td data-title="'Street_Address'" sortable="'Street_Address'" filter="{ 'Street_Address': 'text' }">{{pilgrim.Street_Address}}</td>
+                <td data-title="'City_State_Zip'" sortable="'City_State_Zip'" filter="{ 'City_State_Zip': 'text' }">{{pilgrim.City_State_Zip}}</td>
+                <td data-title="'Church'" sortable="'Church'" filter="{ 'Church': 'text' }">{{pilgrim.Church}}</td>
+                <td data-title="'Age'" sortable="'Age'" filter="{ 'Age': 'text' }">{{pilgrim.Age}}</td>
+                <td data-title="'Special'" sortable="'Special'" filter="{ 'Special': 'text' }">{{pilgrim.Special}}</td>
+                <td data-title="'Room_Mate1'" sortable="'Room_Mate1'" filter="{ 'Room_Mate1': 'text' }">{{pilgrim.Room_Mate1}}</td>
+                <td data-title="'Room_Mate2'" sortable="'Room_Mate2'" filter="{ 'Room_Mate2': 'text' }">{{pilgrim.Room_Mate2}}</td>
+                <td data-title="'Paid'" sortable="'Paid'" filter="{ 'Paid': 'text' }">{{pilgrim.Paid}}</td>
+                <td data-title="'Amount_Paid'" sortable="'Amount_Paid'" filter="{ 'Amount_Paid': 'text' }">{{pilgrim.Amount_Paid}}</td>
+                <td data-title="'Amount_Due'" sortable="'Amount_Due'" filter="{ 'Amount_Due': 'text' }">{{pilgrim.Amount_Due}}</td>
+                <td data-title="'CheckNumber'" sortable="'CheckNumber'" filter="{ 'CheckNumber': 'text' }">{{pilgrim.CheckNumber}}</td>
+                <td data-title="'RoomNumber'" sortable="'RoomNumber'" filter="{ 'RoomNumber': 'text' }">{{pilgrim.RoomNumber}}</td>
+                <td data-title="'HomeCluster'" sortable="'HomeCluster'" filter="{ 'HomeCluster': 'text' }">{{pilgrim.HomeCluster}}</td>
                 <td>
                     <div class="table-actions">
                 <td>

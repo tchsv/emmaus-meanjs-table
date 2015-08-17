@@ -4,7 +4,7 @@
 angular.module('pilgrims').run(['Menus',
 	function(Menus) {
 		// Set top bar menu items
-		Menus.addMenuItem('topbar', 'Pilgrims', 'pilgrims', 'dropdown', '/pilgrims(/create)?');
+		Menus.addMenuItem('topbar', 'Pilgrims', 'pilgrims', 'button', '/pilgrims');
 		Menus.addSubMenuItem('topbar', 'pilgrims', 'List Pilgrims', 'pilgrims');
 		Menus.addSubMenuItem('topbar', 'pilgrims', 'New Pilgrim', 'pilgrims/create');
 	}

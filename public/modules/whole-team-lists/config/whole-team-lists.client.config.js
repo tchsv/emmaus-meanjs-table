@@ -9,6 +9,6 @@ angular.module('whole-team-lists').run(['Menus',
 		Menus.addSubMenuItem('topbar', 'whole-team-lists', 'List Paid team lists', 'paid-team-lists');
 		//Menus.addSubMenuItem('topbar', 'whole-team-lists', 'New Whole team list', 'whole-team-lists/create');
 		Menus.addMenuItem('topbar', 'Paid', 'paid-team-lists', 'button', '/paid-team-lists');
-		Menus.addMenuItem('topbar', 'Summary', 'paid-team-summary-lists', 'button', '/paid-team-summary-lists');
+		Menus.addMenuItem('topbar', 'Summary Retreat Center', 'paid-team-summary-lists', 'button', '/paid-team-summary-lists');
 	}
 ]);
