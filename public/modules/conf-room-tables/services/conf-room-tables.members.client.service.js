@@ -1,8 +1,8 @@
 'use strict';
 
 //Conf room tables service used to communicate Conf room tables REST endpoints
-angular.module('conf-room-tables').factory('ConfRoomTablesMembers', ['$scope', '$stateParams', '$location', 'Authentication', 'WholeTeamLists', 'TableSettings', 'Pilgrims',
-	function($scope, $stateParams, $location, Authentication, WholeTeamLists, TableSettings, Pilgrims ) {
+angular.module('conf-room-tables').factory('ConfRoomTablesMembers', [ 'WholeTeamLists', 'TableSettings', 'Pilgrims',
+	function( WholeTeamLists, TableSettings, Pilgrims ) {
 
 		var getTableLeaders =  function() {
 			var nowWholeList = TableSettings.getParams(WholeTeamLists);
