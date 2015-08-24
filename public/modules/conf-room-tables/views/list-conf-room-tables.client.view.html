@@ -1,0 +1,44 @@
+<section data-ng-controller="ConfRoomTablesController">
+    <div class="page-header">
+        <h1>Conf room tables</h1>
+    </div>
+
+    <div class="pull-right">
+      <a type="button" class="btn btn-success" href="/#!/conf-room-tables/create">
+        <i class="glyphicon glyphicon-open"></i> New ConfRoomTable
+      </a>
+    </div>
+
+    <div>
+        <table ng-table="tableParams" show-filter="true">
+            <tr ng-repeat="confRoomTable in $data">
+                <td data-title="'Table'" sortable="'tableName'" filter="{ 'tableName': 'text' }">{{confRoomTable.tableName}}</td>
+                <td data-title="'Table Leader'" sortable="'tableLeader'" filter="{ 'tableLeader': 'text' }">{{confRoomTable.tableLeader}}</td>
+                <td data-title="'Assistant Table Leader'" sortable="'assistantTableLeader'" filter="{ 'assistantTableLeader': 'text' }">{{confRoomTable.assistantTableLeader}}</td>
+                <td data-title="'Pilgrim'" sortable="'pilgrim1'" filter="{ 'pilgrim1': 'text' }">{{confRoomTable.pilgrim1}}</td>
+                <td data-title="'Pilgrim'" sortable="'pilgrim2'" filter="{ 'pilgrim2': 'text' }">{{confRoomTable.pilgrim2}}</td>
+                <td data-title="'Pilgrim'" sortable="'pilgrim3'" filter="{ 'pilgrim3': 'text' }">{{confRoomTable.pilgrim3}}</td>
+                <td data-title="'Pilgrim'" sortable="'pilgrim4'" filter="{ 'pilgrim4': 'text' }">{{confRoomTable.pilgrim4}}</td>
+                <td data-title="'Pilgrim'" sortable="'pilgrim5'" filter="{ 'pilgrim5': 'text' }">{{confRoomTable.pilgrim5}}</td>
+                <td data-title="'Pilgrim'" sortable="'pilgrim6'" filter="{ 'pilgrim6': 'text' }">{{confRoomTable.pilgrim6}}</td>
+                <td data-title="'Pilgrim'" sortable="'pilgrim7'" filter="{ 'pilgrim7': 'text' }">{{confRoomTable.pilgrim7}}</td>
+                <td data-title="'Pilgrim'" sortable="'pilgrim8'" filter="{ 'pilgrim8': 'text' }">{{confRoomTable.pilgrim8}}</td>
+                <td>
+                    <div class="table-actions">
+                <td>
+                   <div class="table-actions">
+                        <a class="btn btn-default" title="View" href="/#!/conf-room-tables/{{confRoomTable._id}}">
+                            <span class="glyphicon glyphicon-eye-open"></span>
+                        </a>
+                        <a class="btn btn-default" title="Edit" href="/#!/conf-room-tables/{{confRoomTable._id}}/edit">
+                            <span class="glyphicon glyphicon-edit"></span>
+                        </a>
+                        <a class="btn btn-danger" title="Remove" ng-really-message="Are you sure ?" ng-really-click="remove(confRoomTable)" item="confRoomTable">
+                  				<span class="glyphicon glyphicon-remove-circle"></span>
+                  			</a>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+</section>
