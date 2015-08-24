@@ -11,6 +11,19 @@ angular.module('pilgrims').controller('PilgrimsController', ['$scope', '$statePa
 			$scope.formFields = PilgrimsForm.getFormFields(disabled);
 		};
 
+		var getPilgrims = function() {
+			var nowWholeList = TableSettings.getParams(Pilgrims);
+			var returnList = [
+				{ 'name':'Snow', 'value':'White'},
+				{ 'name':'Prince', 'value':'Charm'},
+				{ 'name':'Cinder', 'value':'Fella'},
+				{ 'name':'Bubba', 'value':'Gump'},
+				{ 'name':'Jenny', 'value':'Gump'},
+				{ 'name':'Sgt', 'value':'Dan'},
+				{ 'name':'Bubba6', 'value':'Gump6'},
+			];
+			return returnList;
+		};
 
 		// Create new Pilgrim
 		$scope.create = function() {
