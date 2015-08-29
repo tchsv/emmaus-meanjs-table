@@ -13,9 +13,9 @@
         <table ng-table="tableParams" show-filter="true">
             <tr ng-repeat="confRoomTable in $data">
                 <td data-title="'Table'" sortable="'tableName'" filter="{ 'tableName': 'text' }">{{confRoomTable.tableName}}</td>
-                <td data-title="'Table Leader'" sortable="'tableLeader'" filter="{ 'tableLeader': 'text' }">{{confRoomTable.tableLeader}}</td>
-                <td data-title="'Assistant Table Leader'" sortable="'assistantTableLeader'" filter="{ 'assistantTableLeader': 'text' }">{{confRoomTable.assistantTableLeader}}</td>
-                <td data-title="'Pilgrim'" sortable="'pilgrim1'" filter="{ 'pilgrim1': 'text' }">{{confRoomTable.pilgrim1}}</td>
+                <td data-title="'Table Leader'" sortable="'tableLeader'" filter="{ 'tableLeader': 'text' }"><conf-room-team-member-name memberid="{{confRoomTable.tableLeader}}"/></td>
+                <td data-title="'Assistant Table Leader'" sortable="'assistantTableLeader'" filter="{ 'assistantTableLeader': 'text' }"><conf-room-team-member-name memberid="{{confRoomTable.assistantTableLeader}}"/></td>
+                <td data-title="'Pilgrim'" sortable="'pilgrim1'" filter="{ 'pilgrim1': 'text' }"><conf-room-pilgrim-member-name memberid="{{confRoomTable.pilgrim1}}"/></td>
                 <td data-title="'Pilgrim'" sortable="'pilgrim2'" filter="{ 'pilgrim2': 'text' }">{{confRoomTable.pilgrim2}}</td>
                 <td data-title="'Pilgrim'" sortable="'pilgrim3'" filter="{ 'pilgrim3': 'text' }">{{confRoomTable.pilgrim3}}</td>
                 <td data-title="'Pilgrim'" sortable="'pilgrim4'" filter="{ 'pilgrim4': 'text' }">{{confRoomTable.pilgrim4}}</td>
