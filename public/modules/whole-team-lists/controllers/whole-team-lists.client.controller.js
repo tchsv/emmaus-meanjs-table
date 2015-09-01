@@ -83,6 +83,15 @@ angular.module('whole-team-lists').controller('WholeTeamListsController', ['$sco
             }
             return sumValue;
         };
+        $scope.cvsMe = function(tableData) {
+            var keysS =[];
+            angular.forEach(tableData[0], function(value, key) {
+                this.push(key);
+            }, keysS);
+            console.log(keysS);
+            tableData.unshift(keysS);
+            return(tableData);
+        };
         $scope.totalUnPaid= function(stuff) {
             var sumValue =0;
             if (stuff.length == 0 ){

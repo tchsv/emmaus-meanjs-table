@@ -11,6 +11,15 @@ angular.module('pilgrim-rooms').controller('PilgrimRoomsController', ['$scope', 
 			$scope.formFields = PilgrimRoomsForm.getFormFields(disabled);
 		};
 
+		$scope.cvsMe = function(tableData) {
+			var keysS =[];
+			angular.forEach(tableData[0], function(value, key) {
+				this.push(key);
+			}, keysS);
+			console.log(keysS);
+			tableData.unshift(keysS);
+			return(tableData);
+		};
 
 		// Create new Pilgrim room
 		$scope.create = function() {

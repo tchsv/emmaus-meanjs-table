@@ -1,8 +1,8 @@
 'use strict';
 
 //Conf room tables service used to communicate Conf room tables REST endpoints
-angular.module('conf-room-tables')
-    .directive('confRoomPilgrimMemberName', [ 'WholeTeamLists', 'TableSettings', 'Pilgrims', '$resource',
+angular.module('pilgrim-rooms')
+    .directive('pilgrimRoomPilgrimMemberName', [ 'WholeTeamLists', 'TableSettings', 'Pilgrims', '$resource',
 	function( WholeTeamLists, TableSettings, Pilgrims , $resource) {
 
         //var localTeamMember = 'xyz';

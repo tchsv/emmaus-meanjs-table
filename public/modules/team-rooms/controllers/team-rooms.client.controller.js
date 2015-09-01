@@ -11,6 +11,15 @@ angular.module('team-rooms').controller('TeamRoomsController', ['$scope', '$stat
 			$scope.formFields = TeamRoomsForm.getFormFields(disabled);
 		};
 
+		$scope.cvsMe = function(tableData) {
+			var keysS =[];
+			angular.forEach(tableData[0], function(value, key) {
+				this.push(key);
+			}, keysS);
+			console.log(keysS);
+			tableData.unshift(keysS);
+			return(tableData);
+		};
 
 		// Create new Team room
 		$scope.create = function() {

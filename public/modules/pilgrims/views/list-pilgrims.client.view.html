@@ -10,7 +10,7 @@
     </div>
 
     <div>
-        <table ng-table="tableParams" show-filter="true">
+        <table ng-table="tableParams"  class="table table-striped table-bordered table-condensed ng-table-responsive" show-filter="true">
             <tr ng-repeat="pilgrim in $data">
                 <!-- /**
  * Pilgrim Schema
@@ -48,6 +48,10 @@
                   			</a>
                     </div>
                 </td>
+            </tr>
+            <tr>
+                <a type="button" class="btn btn-success " title='Export' ng-csv="cvsMe(tableParams.data)"  filename="pilgrims.csv">
+                    <span class="glyphicon glyphicon-export"></span></a>
             </tr>
         </table>
     </div>

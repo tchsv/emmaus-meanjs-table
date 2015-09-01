@@ -10,7 +10,7 @@
     </div>
 
     <div>
-        <table ng-table="tableParams" class="ng-table-responsive" show-filter="true">
+        <table ng-table="tableParams" class="table table-striped table-bordered table-condensed ng-table-responsive" show-filter="true">
             <tr ng-repeat="wholeTeamList in $data">
                 <td data-title="'Name'" sortable="'Name'" filter="{ 'Name': 'text' }">{{wholeTeamList.Name}}</td>
                 <td data-title="'Committee'" sortable="'Committee'" filter="{ 'Committee': 'text' }">{{wholeTeamList.Committee}}</td>
@@ -40,8 +40,11 @@
                     </div>
                 </td>
             </tr>
+            <tr>
+                <a type="button" class="btn btn-success " title='Export' ng-csv="cvsMe(tableParams.data)"  filename="paid-summary.csv">
+                    <span class="glyphicon glyphicon-export"></span></a>
+            </tr>
         </table>
     </div>
-    <!--<a class="btn btn-primary"  ng-csv="{{ wholeTeamList }}" filename="testBubba.csv">Export to CSV</a>-->
 
 </section>

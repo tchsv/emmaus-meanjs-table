@@ -10,10 +10,22 @@ var mongoose = require('mongoose'),
  * Team room Schema
  */
 var TeamRoomSchema = new Schema({
-	name: {
+	Roommate1: {
+		type: Schema.Types.ObjectId,
+		ref: 'WholeTeamList'
+	},
+	Roommate2: {
+		type: Schema.Types.ObjectId,
+		ref: 'WholeTeamList'
+	},
+	RoomNumber: {
 		type: String,
 		default: '',
-		required: 'Please fill Team room name',
+		trim: true
+	},
+	Building: {
+		type: String,
+		default: '',
 		trim: true
 	},
 	created: {

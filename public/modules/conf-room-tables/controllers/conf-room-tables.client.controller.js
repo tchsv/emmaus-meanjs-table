@@ -13,7 +13,18 @@ angular.module('conf-room-tables').controller('ConfRoomTablesController', ['$sco
             $scope.formFields = ConfRoomTablesForm.getFormFields(disabled);
         };
 
+        $scope.cvsMe = function(tableData) {
+            var keysS =[];
+            angular.forEach(tableData[0], function(value, key) {
+                this.push(key);
+            }, keysS);
+            console.log(keysS);
+            tableData.unshift(keysS);
+            return(tableData);
+        };
+        $scope.pushDataToMainTables = function(tableData) {
 
+        };
         // Create new Conf room table
         $scope.create = function () {
             var confRoomTable = new ConfRoomTables($scope.confRoomTable);

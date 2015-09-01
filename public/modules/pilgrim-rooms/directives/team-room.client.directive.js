@@ -2,7 +2,7 @@
 
 //Conf room tables service used to communicate Conf room tables REST endpoints
 angular.module('conf-room-tables')
-    .directive('confRoomTeamMemberName', [ 'WholeTeamLists', 'TableSettings', 'Pilgrims', '$resource',
+    .directive('pilgrimRoomTeamMemberName', [ 'WholeTeamLists', 'TableSettings', 'Pilgrims', '$resource',
 	function( WholeTeamLists, TableSettings, Pilgrims , $resource) {
 
         //var localTeamMember = 'xyz';
@@ -19,6 +19,9 @@ angular.module('conf-room-tables')
 
         return {
             link: link,
+            scope: {
+
+            },
             restrict: 'E',
             template: '{{localTeamMember}}',
         }

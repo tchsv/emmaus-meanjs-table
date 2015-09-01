@@ -1,8 +1,8 @@
 'use strict';
 
 //Conf room tables service used to communicate Conf room tables REST endpoints
-angular.module('conf-room-tables')
-    .directive('confRoomTeamMemberName', [ 'WholeTeamLists', 'TableSettings', 'Pilgrims', '$resource',
+angular.module('team-rooms')
+    .directive('teamRoomTeamMemberName', [ 'WholeTeamLists', 'TableSettings', 'Pilgrims', '$resource',
 	function( WholeTeamLists, TableSettings, Pilgrims , $resource) {
 
         //var localTeamMember = 'xyz';
@@ -15,17 +15,13 @@ angular.module('conf-room-tables')
                             scope.localTeamMember = answer.Name;
             });
 		};
-
-
         return {
             link: link,
+            scope: {
+
+            },
             restrict: 'E',
             template: '{{localTeamMember}}',
         }
-
-
-
 	}
-
-
 ]);

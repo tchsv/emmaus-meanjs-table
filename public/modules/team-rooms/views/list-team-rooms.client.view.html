@@ -12,7 +12,16 @@
     <div>
         <table ng-table="tableParams" show-filter="true">
             <tr ng-repeat="teamRoom in $data">
-                <td data-title="'Name'" sortable="'name'" filter="{ 'name': 'text' }">{{teamRoom.name}}</td>
+
+                <!--//Roommate1: {-->
+                <!--//Roommate2: {-->
+                <!--//RoomNumber: {-->
+                <!--//Building: {-->
+
+                <td data-title="'Building'" sortable="'Building'" filter="{ 'Building': 'text' }">{{teamRoom.Building}}</td>
+                <td data-title="'RoomNumber'" sortable="'RoomNumber'" filter="{ 'RoomNumber': 'text' }">{{teamRoom.RoomNumber}}</td>
+                <td data-title="'Roommate1'" sortable="'Roommate1'" filter="{ 'Roommate1': 'text' }">{{teamRoom.Roommate1}}</td>
+                <td data-title="'Roommate2'" sortable="'Roommate2'" filter="{ 'Roommate2': 'text' }">{{teamRoom.Roommate2}}</td>
                 <td>
                     <div class="table-actions">
                 <td>
@@ -28,6 +37,10 @@
                   			</a>
                     </div>
                 </td>
+            </tr>
+            <tr>
+                <a type="button" class="btn btn-success " title='Export' ng-csv="cvsMe(tableParams.data)"  filename="team-rooms.csv">
+                    <span class="glyphicon glyphicon-export"></span></a>
             </tr>
         </table>
     </div>

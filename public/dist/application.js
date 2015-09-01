@@ -4,7 +4,7 @@
 var ApplicationConfiguration = (function() {
 	// Init module configuration options
 	var applicationModuleName = 'emmauswalkhousingandregistration';
-	var applicationModuleVendorDependencies = ['ngResource', 'ngCookies',  'ui.router', 'ui.bootstrap', 'ui.utils', 'ngTable', 'formly', 'formlyBootstrap'];
+	var applicationModuleVendorDependencies = ['ngResource', 'ngCookies',  'ui.router', 'ui.bootstrap', 'ui.utils', 'ngTable', 'formly', 'formlyBootstrap', 'ngSanitize', 'ngCsv'];
 
 	// Add a new vertical module
 	var registerModule = function(moduleName, dependencies) {
@@ -44,12 +44,27 @@ angular.element(document).ready(function() {
 });
 'use strict';
 
+// Use application configuration module to register a new module
+ApplicationConfiguration.registerModule('conf-room-tables', ['core']);
+
+'use strict';
+
 // Use Applicaion configuration module to register a new module
 ApplicationConfiguration.registerModule('core');
 'use strict';
 
 // Use application configuration module to register a new module
+ApplicationConfiguration.registerModule('pilgrim-rooms', ['core']);
+
+'use strict';
+
+// Use application configuration module to register a new module
 ApplicationConfiguration.registerModule('pilgrims', ['core']);
+
+'use strict';
+
+// Use application configuration module to register a new module
+ApplicationConfiguration.registerModule('team-rooms', ['core']);
 
 'use strict';
 
@@ -60,6 +75,407 @@ ApplicationConfiguration.registerModule('users');
 
 // Use application configuration module to register a new module
 ApplicationConfiguration.registerModule('whole-team-lists', ['core']);
+
+'use strict';
+
+// Configuring the new module
+angular.module('conf-room-tables').run(['Menus',
+	function(Menus) {
+		// Set top bar menu items
+		Menus.addMenuItem('topbar', 'Conf room tables', 'conf-room-tables', 'dropdown', '/conf-room-tables(/create)?');
+		Menus.addSubMenuItem('topbar', 'conf-room-tables', 'List Conf room tables', 'conf-room-tables');
+		Menus.addSubMenuItem('topbar', 'conf-room-tables', 'New Conf room table', 'conf-room-tables/create');
+	}
+]);
+
+'use strict';
+
+//Setting up route
+angular.module('conf-room-tables').config(['$stateProvider',
+	function($stateProvider) {
+		// Conf room tables state routing
+		$stateProvider.
+		state('listConfRoomTables', {
+			url: '/conf-room-tables',
+			templateUrl: 'modules/conf-room-tables/views/list-conf-room-tables.client.view.html'
+		}).
+		state('createConfRoomTable', {
+			url: '/conf-room-tables/create',
+			templateUrl: 'modules/conf-room-tables/views/create-conf-room-table.client.view.html'
+		}).
+		state('viewConfRoomTable', {
+			url: '/conf-room-tables/:confRoomTableId',
+			templateUrl: 'modules/conf-room-tables/views/view-conf-room-table.client.view.html'
+		}).
+		state('editConfRoomTable', {
+			url: '/conf-room-tables/:confRoomTableId/edit',
+			templateUrl: 'modules/conf-room-tables/views/edit-conf-room-table.client.view.html'
+		});
+	}
+]);
+'use strict';
+
+// Conf room tables controller
+angular.module('conf-room-tables').controller('ConfRoomTablesController', ['$scope', '$stateParams', '$location', 'Authentication', 'ConfRoomTables', 'TableSettings', 'ConfRoomTablesForm',
+    function ($scope, $stateParams, $location, Authentication, ConfRoomTables, TableSettings, ConfRoomTablesForm ) {
+        $scope.authentication = Authentication;
+        $scope.tableParams = TableSettings.getParams(ConfRoomTables);
+        $scope.confRoomTable = {};
+
+
+
+        $scope.setFormFields = function (disabled) {
+            $scope.formFields = ConfRoomTablesForm.getFormFields(disabled);
+        };
+
+        $scope.cvsMe = function(tableData) {
+            var keysS =[];
+            angular.forEach(tableData[0], function(value, key) {
+                this.push(key);
+            }, keysS);
+            console.log(keysS);
+            tableData.unshift(keysS);
+            return(tableData);
+        };
+        $scope.pushDataToMainTables = function(tableData) {
+
+        };
+        // Create new Conf room table
+        $scope.create = function () {
+            var confRoomTable = new ConfRoomTables($scope.confRoomTable);
+
+            // Redirect after save
+            confRoomTable.$save(function (response) {
+                $location.path('conf-room-tables/' + response._id);
+            }, function (errorResponse) {
+                $scope.error = errorResponse.data.message;
+            });
+        };
+
+        // Remove existing Conf room table
+        $scope.remove = function (confRoomTable) {
+
+            if (confRoomTable) {
+                confRoomTable = ConfRoomTables.get({confRoomTableId: confRoomTable._id}, function () {
+                    confRoomTable.$remove();
+                    $scope.tableParams.reload();
+                });
+
+            } else {
+                $scope.confRoomTable.$remove(function () {
+                    $location.path('confRoomTables');
+                });
+            }
+
+        };
+
+        // Update existing Conf room table
+        $scope.update = function () {
+            var confRoomTable = $scope.confRoomTable;
+
+            confRoomTable.$update(function () {
+                $location.path('conf-room-tables/' + confRoomTable._id);
+            }, function (errorResponse) {
+                $scope.error = errorResponse.data.message;
+            });
+        };
+
+
+        $scope.toViewConfRoomTable = function () {
+            $scope.confRoomTable = ConfRoomTables.get({confRoomTableId: $stateParams.confRoomTableId});
+            $scope.setFormFields(true);
+        };
+
+        $scope.toEditConfRoomTable = function () {
+            $scope.confRoomTable = ConfRoomTables.get({confRoomTableId: $stateParams.confRoomTableId});
+            $scope.setFormFields(false);
+        };
+
+    }
+
+]);
+
+'use strict';
+
+//Conf room tables service used to communicate Conf room tables REST endpoints
+angular.module('conf-room-tables')
+    .directive('confRoomPilgrimMemberName', [ 'WholeTeamLists', 'TableSettings', 'Pilgrims', '$resource',
+	function( WholeTeamLists, TableSettings, Pilgrims , $resource) {
+
+        //var localTeamMember = 'xyz';
+
+		var link =  function(scope, element, attrs) {
+            var returnList = [];
+            if (!attrs.memberid) {
+                scope.localPilgrim = 'Empty';
+            }
+            else if (attrs.memberid == 'Empty') {
+                scope.localPilgrim = 'Empty';
+            }
+            else {
+                var nowWholeList = $resource('/pilgrims/' + attrs.memberid);
+                var answer = nowWholeList.get(function () {
+                    console.log(answer);
+                    scope.localPilgrim = answer.FirstName + ' ' + answer.LastName;
+                });
+            }
+		};
+
+
+        return {
+            link: link,
+            scope: {
+
+            },
+            template: '{{localPilgrim}}',
+            restrict: 'E',
+        }
+
+
+
+	}
+
+
+]);
+
+'use strict';
+
+//Conf room tables service used to communicate Conf room tables REST endpoints
+angular.module('conf-room-tables')
+    .directive('confRoomTeamMemberName', [ 'WholeTeamLists', 'TableSettings', 'Pilgrims', '$resource',
+	function( WholeTeamLists, TableSettings, Pilgrims , $resource) {
+
+        //var localTeamMember = 'xyz';
+
+		var link =  function(scope, element, attrs) {
+            var returnList = [];
+            var nowWholeList = $resource('/whole-team-lists/' + attrs.memberid);
+                var answer = nowWholeList.get(function() {
+                    console.log(answer);
+                            scope.localTeamMember = answer.Name;
+            });
+		};
+
+
+        return {
+            link: link,
+            scope: {
+
+            },
+            restrict: 'E',
+            template: '{{localTeamMember}}',
+        }
+
+
+
+	}
+
+
+]);
+
+'use strict';
+
+//Conf room tables service used to communicate Conf room tables REST endpoints
+angular.module('conf-room-tables').factory('ConfRoomTables', ['$resource',
+	function($resource) {
+		return $resource('conf-room-tables/:confRoomTableId', { confRoomTableId: '@_id'
+		}, {
+			update: {
+				method: 'PUT'
+			}
+		});
+	}
+]);
+(function () {
+    'use strict';
+
+    angular
+        .module('conf-room-tables')
+        .factory('ConfRoomTablesForm', [ 'ConfRoomTablesMembers',function  (ConfRoomTablesMembers) {
+        var getFormFields = function (disabled) {
+
+            var fields = [
+                {
+                    key: 'tableName',
+                    type: 'input',
+                    templateOptions: {
+                        label: 'Table:',
+                        disabled: disabled
+                    },
+                },
+                {
+                    key: 'tableLeader',
+                    type: 'select',
+                    templateOptions: {
+                        label: 'Table Leader:',
+                        options: ConfRoomTablesMembers.getTableLeaders()
+                    },
+                },
+                {
+                    key: 'assistantTableLeader',
+                    type: 'select',
+                    templateOptions: {
+                        label: 'Asst. Table Leader:',
+                        options: ConfRoomTablesMembers.getAssistantTableLeaders()
+                    },
+                },
+                {
+                    key: 'pilgrim1',
+                    type: 'select',
+                    templateOptions: {
+                        label: 'Pilgrim:',
+                        options: ConfRoomTablesMembers.getPilgrims()
+                    },
+                },
+                {
+                    key: 'pilgrim2',
+                    type: 'select',
+                    templateOptions: {
+                        label: 'Pilgrim:',
+                        options: ConfRoomTablesMembers.getPilgrims()
+                    },
+                },
+                {
+                    key: 'pilgrim3',
+                    type: 'select',
+                    templateOptions: {
+                        label: 'Pilgrim:',
+                        options: ConfRoomTablesMembers.getPilgrims()
+                    },
+                },
+                {
+                    key: 'pilgrim4',
+                    type: 'select',
+                    templateOptions: {
+                        label: 'Pilgrim:',
+                        options: ConfRoomTablesMembers.getPilgrims()
+                    },
+                },
+                {
+                    key: 'pilgrim5',
+                    type: 'select',
+                    templateOptions: {
+                        label: 'Pilgrim:',
+                        options: ConfRoomTablesMembers.getPilgrims()
+                    },
+                },
+                {
+                    key: 'pilgrim6',
+                    type: 'select',
+                    templateOptions: {
+                        label: 'Pilgrim:',
+                        options: ConfRoomTablesMembers.getPilgrims()
+                    },
+                },
+                {
+                    key: 'pilgrim7',
+                    type: 'select',
+                    templateOptions: {
+                        label: 'Pilgrim:',
+                        options: ConfRoomTablesMembers.getPilgrims()
+                    },
+                },
+                {
+                    key: 'pilgrim8',
+                    type: 'select',
+                    templateOptions: {
+                        label: 'Pilgrim:',
+                        options: ConfRoomTablesMembers.getPilgrims()
+                    },
+                },
+
+            ];
+
+            return fields;
+
+        };
+
+        var service = {
+            getFormFields: getFormFields
+        };
+
+        return service;
+
+    }])
+
+})();
+
+'use strict';
+
+//Conf room tables service used to communicate Conf room tables REST endpoints
+angular.module('conf-room-tables')
+    .service('ConfRoomTablesMembers', function(){})
+    .factory('ConfRoomTablesMembers', [ 'WholeTeamLists', 'TableSettings', 'Pilgrims', '$resource',
+	function( WholeTeamLists, TableSettings, Pilgrims , $resource) {
+
+		var getTableLeaders =  function() {
+            var returnList = [];
+            var nowWholeList = $resource('/whole-team-lists?count=999&page=1');
+                var answer = nowWholeList.get(function() {
+                    console.log(answer);
+                    for (var i = 0; i < answer.total; i++) {
+                        var value = [];
+                        if (answer.results[i].Committee == 'Table Leaders') {
+                            value['name'] = answer.results[i].Name;
+                            value['value'] = answer.results[i]._id;
+                            returnList.push(value);
+                        }
+                    }
+                console.log(returnList);
+            });
+			return returnList;
+		};
+		var getAssistantTableLeaders = function() {
+            var returnList = [];
+            var nowWholeList = $resource('/whole-team-lists?count=999&page=1');
+            var answer = nowWholeList.get(function() {
+                console.log(answer);
+                for (var i = 0; i < answer.total; i++) {
+                    var value = [];
+                    if (answer.results[i].Committee == 'Asst. Table Ldrs.') {
+                        value['name'] = answer.results[i].Name;
+                        value['value'] = answer.results[i]._id;
+                        returnList.push(value);
+                    }
+                }
+                console.log(returnList);
+            });
+            return returnList;
+		};
+
+		var getPilgrims =    function() {
+            var returnList = [];
+            var nowWholeList = $resource('/pilgrims?count=999&page=1');
+            var noneValue = [];
+            noneValue['name'] = 'Empty';
+            noneValue['value'] = 'Empty';
+            returnList.push(noneValue);
+            var answer = nowWholeList.get(function() {
+                console.log(answer);
+                for (var i = 0; i < answer.total; i++) {
+                    var value = [];
+                        value['name'] = answer.results[i].FirstName + ' ' + answer.results[i].LastName;
+                        value['value'] = answer.results[i]._id;
+                        returnList.push(value);
+                }
+                console.log(returnList);
+            });
+            return returnList;
+		};
+
+
+        return {
+            getTableLeaders: getTableLeaders,
+            getAssistantTableLeaders: getAssistantTableLeaders,
+            getPilgrims: getPilgrims
+        }
+
+
+
+	}
+
+
+]);
 
 'use strict';
 
@@ -374,10 +790,380 @@ angular.module('core').service('Menus', [
 'use strict';
 
 // Configuring the new module
+angular.module('pilgrim-rooms').run(['Menus',
+	function(Menus) {
+		// Set top bar menu items
+		Menus.addMenuItem('topbar', 'Pilgrim Rms', 'pilgrim-rooms', 'dropdown', '/pilgrim-rooms(/create)?');
+		Menus.addSubMenuItem('topbar', 'pilgrim-rooms', 'List Pilgrim rooms', 'pilgrim-rooms');
+		Menus.addSubMenuItem('topbar', 'pilgrim-rooms', 'New Pilgrim room', 'pilgrim-rooms/create');
+	}
+]);
+
+'use strict';
+
+//Setting up route
+angular.module('pilgrim-rooms').config(['$stateProvider',
+	function($stateProvider) {
+		// Pilgrim rooms state routing
+		$stateProvider.
+		state('listPilgrimRooms', {
+			url: '/pilgrim-rooms',
+			templateUrl: 'modules/pilgrim-rooms/views/list-pilgrim-rooms.client.view.html'
+		}).
+		state('createPilgrimRoom', {
+			url: '/pilgrim-rooms/create',
+			templateUrl: 'modules/pilgrim-rooms/views/create-pilgrim-room.client.view.html'
+		}).
+		state('viewPilgrimRoom', {
+			url: '/pilgrim-rooms/:pilgrimRoomId',
+			templateUrl: 'modules/pilgrim-rooms/views/view-pilgrim-room.client.view.html'
+		}).
+		state('editPilgrimRoom', {
+			url: '/pilgrim-rooms/:pilgrimRoomId/edit',
+			templateUrl: 'modules/pilgrim-rooms/views/edit-pilgrim-room.client.view.html'
+		});
+	}
+]);
+'use strict';
+
+// Pilgrim rooms controller
+angular.module('pilgrim-rooms').controller('PilgrimRoomsController', ['$scope', '$stateParams', '$location', 'Authentication', 'PilgrimRooms', 'TableSettings', 'PilgrimRoomsForm',
+	function($scope, $stateParams, $location, Authentication, PilgrimRooms, TableSettings, PilgrimRoomsForm ) {
+		$scope.authentication = Authentication;
+		$scope.tableParams = TableSettings.getParams(PilgrimRooms);
+		$scope.pilgrimRoom = {};
+
+		$scope.setFormFields = function(disabled) {
+			$scope.formFields = PilgrimRoomsForm.getFormFields(disabled);
+		};
+
+		$scope.cvsMe = function(tableData) {
+			var keysS =[];
+			angular.forEach(tableData[0], function(value, key) {
+				this.push(key);
+			}, keysS);
+			console.log(keysS);
+			tableData.unshift(keysS);
+			return(tableData);
+		};
+
+		// Create new Pilgrim room
+		$scope.create = function() {
+			var pilgrimRoom = new PilgrimRooms($scope.pilgrimRoom);
+
+			// Redirect after save
+			pilgrimRoom.$save(function(response) {
+				$location.path('pilgrim-rooms/' + response._id);
+			}, function(errorResponse) {
+				$scope.error = errorResponse.data.message;
+			});
+		};
+
+		// Remove existing Pilgrim room
+		$scope.remove = function(pilgrimRoom) {
+
+			if ( pilgrimRoom ) {
+				pilgrimRoom = PilgrimRooms.get({pilgrimRoomId:pilgrimRoom._id}, function() {
+					pilgrimRoom.$remove();
+					$scope.tableParams.reload();
+				});
+
+			} else {
+				$scope.pilgrimRoom.$remove(function() {
+					$location.path('pilgrimRooms');
+				});
+			}
+
+		};
+
+		// Update existing Pilgrim room
+		$scope.update = function() {
+			var pilgrimRoom = $scope.pilgrimRoom;
+
+			pilgrimRoom.$update(function() {
+				$location.path('pilgrim-rooms/' + pilgrimRoom._id);
+			}, function(errorResponse) {
+				$scope.error = errorResponse.data.message;
+			});
+		};
+
+
+
+		$scope.toViewPilgrimRoom = function() {
+			$scope.pilgrimRoom = PilgrimRooms.get( {pilgrimRoomId: $stateParams.pilgrimRoomId} );
+			$scope.setFormFields(true);
+		};
+
+		$scope.toEditPilgrimRoom = function() {
+			$scope.pilgrimRoom = PilgrimRooms.get( {pilgrimRoomId: $stateParams.pilgrimRoomId} );
+			$scope.setFormFields(false);
+		};
+
+	}
+
+]);
+
+'use strict';
+
+//Conf room tables service used to communicate Conf room tables REST endpoints
+angular.module('pilgrim-rooms')
+    .directive('confRoomPilgrimMemberName', [ 'WholeTeamLists', 'TableSettings', 'Pilgrims', '$resource',
+	function( WholeTeamLists, TableSettings, Pilgrims , $resource) {
+
+        //var localTeamMember = 'xyz';
+
+		var link =  function(scope, element, attrs) {
+            var returnList = [];
+            if (!attrs.memberid) {
+                scope.localPilgrim = 'Empty';
+            }
+            else if (attrs.memberid == 'Empty') {
+                scope.localPilgrim = 'Empty';
+            }
+            else {
+                var nowWholeList = $resource('/pilgrims/' + attrs.memberid);
+                var answer = nowWholeList.get(function () {
+                    console.log(answer);
+                    scope.localPilgrim = answer.FirstName + ' ' + answer.LastName;
+                });
+            }
+		};
+
+
+        return {
+            link: link,
+            scope: {
+
+            },
+            template: '{{localPilgrim}}',
+            restrict: 'E',
+        }
+
+
+
+	}
+
+
+]);
+
+'use strict';
+
+//Conf room tables service used to communicate Conf room tables REST endpoints
+angular.module('conf-room-tables')
+    .directive('confRoomTeamMemberName', [ 'WholeTeamLists', 'TableSettings', 'Pilgrims', '$resource',
+	function( WholeTeamLists, TableSettings, Pilgrims , $resource) {
+
+        //var localTeamMember = 'xyz';
+
+		var link =  function(scope, element, attrs) {
+            var returnList = [];
+            var nowWholeList = $resource('/whole-team-lists/' + attrs.memberid);
+                var answer = nowWholeList.get(function() {
+                    console.log(answer);
+                            scope.localTeamMember = answer.Name;
+            });
+		};
+
+
+        return {
+            link: link,
+            scope: {
+
+            },
+            restrict: 'E',
+            template: '{{localTeamMember}}',
+        }
+
+
+
+	}
+
+
+]);
+
+'use strict';
+
+//Pilgrim rooms service used to communicate Pilgrim rooms REST endpoints
+angular.module('pilgrim-rooms').factory('PilgrimRooms', ['$resource',
+	function($resource) {
+		return $resource('pilgrim-rooms/:pilgrimRoomId', { pilgrimRoomId: '@_id'
+		}, {
+			update: {
+				method: 'PUT'
+			}
+		});
+	}
+]);
+(function () {
+    'use strict';
+
+    angular
+        .module('pilgrim-rooms')
+        .factory('PilgrimRoomsForm', ['ConfRoomTablesMembers', function (ConfRoomTablesMembers) {
+
+            var getFormFields = function (disabled) {
+
+                //TeamRoommate: {
+                //  type: Schema.Types.ObjectId,
+                //      ref: 'WholeTeamList'
+                //},
+                //PilgrimRoommate1: {
+                //  type:Schema.Types.ObjectId,
+                //      ref: 'Pilgrim'
+                //},
+                //PilgrimRoommate2: {
+                //  type:Schema.Types.ObjectId,
+                //      ref: 'Pilgrim'
+                //},
+                //RoomNumber: {
+                //  type: String,
+                //default: '',
+                //      trim: true
+                //},
+                //UpDown: {
+                //  type: String,
+                //default: '',
+                //      trim: true
+                //},
+                //Building: {
+                //  type: String,
+                //default: '',
+                //      trim: true
+                //},
+
+
+                var fields = [
+                    {
+                        key: 'TeamRoommate',
+                        type: 'input',
+                        templateOptions: {
+                            label: 'Team Roommate:',
+                            options: ConfRoomTablesMembers.getTeam()
+                        }
+                    },
+                    {
+                        key: 'PilgrimRoommate1',
+                        type: 'input',
+                        templateOptions: {
+                            label: 'Pilgrim Roommate 1:',
+                            options: ConfRoomTablesMembers.getPilgrim()
+                        }
+                    },
+                    {
+                        key: 'PilgrimRoommate2',
+                        type: 'input',
+                        templateOptions: {
+                            label: 'Pilgrim Roommate 2:',
+                            options: ConfRoomTablesMembers.getPilgrim()
+                        }
+                    },
+                    {
+                        key: 'RoomNumber',
+                        type: 'input',
+                        templateOptions: {
+                            label: 'Room Number:',
+                            disabled: disabled
+                        }
+                    },
+                    {
+                        key: 'UpDown',
+                        type: 'input',
+                        templateOptions: {
+                            label: 'Up Down:',
+                            disabled: disabled
+                        }
+                    },
+                    {
+                        key: 'Building',
+                        type: 'input',
+                        templateOptions: {
+                            label: 'Building:',
+                            disabled: disabled
+                        }
+                    },
+
+                ];
+
+                return fields;
+
+            };
+
+            var service = {
+                getFormFields: getFormFields
+            };
+
+            return service;
+
+        }])
+
+})();
+
+'use strict';
+
+//Conf room tables service used to communicate Conf room tables REST endpoints
+angular.module('pilgrim-rooms')
+    .service('ConfRoomTablesMembers', function(){})
+    .factory('ConfRoomTablesMembers', [ 'WholeTeamLists', 'TableSettings', 'Pilgrims', '$resource',
+	function( WholeTeamLists, TableSettings, Pilgrims , $resource) {
+
+		var getTeam =  function() {
+            var returnList = [];
+            var nowWholeList = $resource('/whole-team-lists?count=999&page=1');
+                var answer = nowWholeList.get(function() {
+                    console.log(answer);
+                    for (var i = 0; i < answer.total; i++) {
+                        var value = [];
+                        if ( (answer.results[i].Committee == 'Table Leaders' ) || (answer.results[i].Committee == 'Asst. Table Ldrs.') ) {
+                            value['name'] = answer.results[i].Name;
+                            value['value'] = answer.results[i]._id;
+                            returnList.push(value);
+                        }
+                    }
+                console.log(returnList);
+            });
+			return returnList;
+		};
+
+		var getPilgrim =    function() {
+            var returnList = [];
+            var nowWholeList = $resource('/pilgrims?count=999&page=1');
+            var noneValue = [];
+            noneValue['name'] = 'Empty';
+            noneValue['value'] = 'Empty';
+            returnList.push(noneValue);
+            var answer = nowWholeList.get(function() {
+                console.log(answer);
+                for (var i = 0; i < answer.total; i++) {
+                    var value = [];
+                        value['name'] = answer.results[i].FirstName + ' ' + answer.results[i].LastName;
+                        value['value'] = answer.results[i]._id;
+                        returnList.push(value);
+                }
+                console.log(returnList);
+            });
+            return returnList;
+		};
+
+
+        return {
+            getTeam: getTeam,
+            getPilgrim: getPilgrim
+        }
+
+
+
+	}
+
+
+]);
+
+'use strict';
+
+// Configuring the new module
 angular.module('pilgrims').run(['Menus',
 	function(Menus) {
 		// Set top bar menu items
-		Menus.addMenuItem('topbar', 'Pilgrims', 'pilgrims', 'dropdown', '/pilgrims(/create)?');
+		Menus.addMenuItem('topbar', 'Pilgrims', 'pilgrims', 'button', '/pilgrims');
 		Menus.addSubMenuItem('topbar', 'pilgrims', 'List Pilgrims', 'pilgrims');
 		Menus.addSubMenuItem('topbar', 'pilgrims', 'New Pilgrim', 'pilgrims/create');
 	}
@@ -419,6 +1205,15 @@ angular.module('pilgrims').controller('PilgrimsController', ['$scope', '$statePa
 
 		$scope.setFormFields = function(disabled) {
 			$scope.formFields = PilgrimsForm.getFormFields(disabled);
+		};
+		$scope.cvsMe = function(tableData) {
+			var keysS =[];
+			angular.forEach(tableData[0], function(value, key) {
+				this.push(key);
+			}, keysS);
+			console.log(keysS);
+			tableData.unshift(keysS);
+			return(tableData);
 		};
 
 
@@ -491,7 +1286,7 @@ angular.module('pilgrims').factory('Pilgrims', ['$resource',
 		});
 	}
 ]);
-(function() {
+(function () {
     'use strict';
 
     angular
@@ -500,33 +1295,427 @@ angular.module('pilgrims').factory('Pilgrims', ['$resource',
 
     function factory() {
 
-      var getFormFields = function(disabled) {
+        var getFormFields = function (disabled) {
+            /**
+             *
+             * FirstName    LastName    Street_Address    City_State_Zip    Church    Age    Special
+             * Room_Mate1    Room_Mate2    Paid    Amount_Paid    Amount_Due    CheckNumber    RoomNumber    HomeCluster
+             *
+             */
+            var fields = [
+                {
+                    key: 'FirstName',
+                    type: 'input',
+                    templateOptions: {
+                        label: 'First Name:',
+                        disabled: disabled
+                    }
+                },
+                {
+                    key: 'LastName',
+                    type: 'input',
+                    templateOptions: {
+                        label: 'Last Name:',
+                        disabled: disabled
+                    }
+                },
+                {
+                    key: 'Street_Address',
+                    type: 'input',
+                    templateOptions: {
+                        label: 'Street Address:',
+                        disabled: disabled
+                    }
+                },
+                {
+                    key: 'City_State_Zip',
+                    type: 'input',
+                    templateOptions: {
+                        label: 'City State, Zip:',
+                        disabled: disabled
+                    }
+                },
+                {
+                    key: 'Church',
+                    type: 'input',
+                    templateOptions: {
+                        label: 'Church:',
+                        disabled: disabled
+                    }
+                },
+                {
+                    key: 'Age',
+                    type: 'input',
+                    templateOptions: {
+                        label: 'Age:',
+                        disabled: disabled
+                    }
+                },
+                {
+                    key: 'Special',
+                    type: 'input',
+                    templateOptions: {
+                        label: 'Special Info:',
+                        disabled: disabled
+                    }
+                },
+                {
+                    key: 'Room_Mate1',
+                    type: 'input',
+                    templateOptions: {
+                        label: 'Room Mate 1:',
+                        disabled: disabled
+                    }
+                },
+                {
+                    key: 'Room_Mate2',
+                    type: 'input',
+                    templateOptions: {
+                        label: 'Room Mate 2:',
+                        disabled: disabled
+                    }
+                },
+                {
+                    key: 'Paid',
+                    type: 'radio',
+                    templateOptions: {
+                        label: 'Paid:',
+                        disabled: disabled,
+                        options: [{name: "Yes", value: "Yes"},
+                            {name: "No", value: "No"},
+                        ]
+                    }
+                },
+                {
+                    key: 'Amount_Paid',
+                    type: 'input',
+                    templateOptions: {
+                        label: 'Amount Recived:',
+                        disabled: disabled
+                    }
+                },
+                {
+                    key: 'Amount_Due',
+                    type: 'input',
+                    templateOptions: {
+                        label: 'Amount Due:',
+                        disabled: disabled
+                    }
+                },
+                {
+                    key: 'CheckNumber',
+                    type: 'input',
+                    templateOptions: {
+                        label: 'Check Number:',
+                        disabled: disabled
+                    }
+                },
+                {
+                    key: 'RoomNumber',
+                    type: 'input',
+                    templateOptions: {
+                        label: 'Room Number:',
+                        disabled: disabled
+                    }
+                },
+                {
+                    key: 'HomeCluster',
+                    type: 'input',
+                    templateOptions: {
+                        label: 'Home Cluster:',
+                        disabled: disabled
+                    }
+                }
+            ];
 
-        var fields = [
-  				{
-  					key: 'name',
-  					type: 'input',
-  					templateOptions: {
-  			      label: 'Name:',
-  						disabled: disabled
-  			    }
-  				}
+            return fields;
 
-  			];
+        };
 
-        return fields;
+        var service = {
+            getFormFields: getFormFields
+        };
 
-      };
+        return service;
 
-      var service = {
-        getFormFields: getFormFields
-      };
-
-      return service;
-
-  }
+    }
 
 })();
+
+'use strict';
+
+// Configuring the new module
+angular.module('team-rooms').run(['Menus',
+	function(Menus) {
+		// Set top bar menu items
+		Menus.addMenuItem('topbar', 'Team Rms', 'team-rooms', 'dropdown', '/team-rooms(/create)?');
+		Menus.addSubMenuItem('topbar', 'team-rooms', 'List Team rooms', 'team-rooms');
+		Menus.addSubMenuItem('topbar', 'team-rooms', 'New Team room', 'team-rooms/create');
+	}
+]);
+
+'use strict';
+
+//Setting up route
+angular.module('team-rooms').config(['$stateProvider',
+	function($stateProvider) {
+		// Team rooms state routing
+		$stateProvider.
+		state('listTeamRooms', {
+			url: '/team-rooms',
+			templateUrl: 'modules/team-rooms/views/list-team-rooms.client.view.html'
+		}).
+		state('createTeamRoom', {
+			url: '/team-rooms/create',
+			templateUrl: 'modules/team-rooms/views/create-team-room.client.view.html'
+		}).
+		state('viewTeamRoom', {
+			url: '/team-rooms/:teamRoomId',
+			templateUrl: 'modules/team-rooms/views/view-team-room.client.view.html'
+		}).
+		state('editTeamRoom', {
+			url: '/team-rooms/:teamRoomId/edit',
+			templateUrl: 'modules/team-rooms/views/edit-team-room.client.view.html'
+		});
+	}
+]);
+'use strict';
+
+// Team rooms controller
+angular.module('team-rooms').controller('TeamRoomsController', ['$scope', '$stateParams', '$location', 'Authentication', 'TeamRooms', 'TableSettings', 'TeamRoomsForm',
+	function($scope, $stateParams, $location, Authentication, TeamRooms, TableSettings, TeamRoomsForm ) {
+		$scope.authentication = Authentication;
+		$scope.tableParams = TableSettings.getParams(TeamRooms);
+		$scope.teamRoom = {};
+
+		$scope.setFormFields = function(disabled) {
+			$scope.formFields = TeamRoomsForm.getFormFields(disabled);
+		};
+
+		$scope.cvsMe = function(tableData) {
+			var keysS =[];
+			angular.forEach(tableData[0], function(value, key) {
+				this.push(key);
+			}, keysS);
+			console.log(keysS);
+			tableData.unshift(keysS);
+			return(tableData);
+		};
+
+		// Create new Team room
+		$scope.create = function() {
+			var teamRoom = new TeamRooms($scope.teamRoom);
+
+			// Redirect after save
+			teamRoom.$save(function(response) {
+				$location.path('team-rooms/' + response._id);
+			}, function(errorResponse) {
+				$scope.error = errorResponse.data.message;
+			});
+		};
+
+		// Remove existing Team room
+		$scope.remove = function(teamRoom) {
+
+			if ( teamRoom ) {
+				teamRoom = TeamRooms.get({teamRoomId:teamRoom._id}, function() {
+					teamRoom.$remove();
+					$scope.tableParams.reload();
+				});
+
+			} else {
+				$scope.teamRoom.$remove(function() {
+					$location.path('teamRooms');
+				});
+			}
+
+		};
+
+		// Update existing Team room
+		$scope.update = function() {
+			var teamRoom = $scope.teamRoom;
+
+			teamRoom.$update(function() {
+				$location.path('team-rooms/' + teamRoom._id);
+			}, function(errorResponse) {
+				$scope.error = errorResponse.data.message;
+			});
+		};
+
+
+
+		$scope.toViewTeamRoom = function() {
+			$scope.teamRoom = TeamRooms.get( {teamRoomId: $stateParams.teamRoomId} );
+			$scope.setFormFields(true);
+		};
+
+		$scope.toEditTeamRoom = function() {
+			$scope.teamRoom = TeamRooms.get( {teamRoomId: $stateParams.teamRoomId} );
+			$scope.setFormFields(false);
+		};
+
+	}
+
+]);
+
+'use strict';
+
+//Conf room tables service used to communicate Conf room tables REST endpoints
+angular.module('team-rooms')
+    .directive('confRoomTeamMemberName', [ 'WholeTeamLists', 'TableSettings', 'Pilgrims', '$resource',
+	function( WholeTeamLists, TableSettings, Pilgrims , $resource) {
+
+        //var localTeamMember = 'xyz';
+
+		var link =  function(scope, element, attrs) {
+            var returnList = [];
+            var nowWholeList = $resource('/whole-team-lists/' + attrs.memberid);
+                var answer = nowWholeList.get(function() {
+                    console.log(answer);
+                            scope.localTeamMember = answer.Name;
+            });
+		};
+        return {
+            link: link,
+            scope: {
+
+            },
+            restrict: 'E',
+            template: '{{localTeamMember}}',
+        }
+	}
+]);
+
+'use strict';
+
+//Team rooms service used to communicate Team rooms REST endpoints
+angular.module('team-rooms').factory('TeamRooms', ['$resource',
+	function($resource) {
+		return $resource('team-rooms/:teamRoomId', { teamRoomId: '@_id'
+		}, {
+			update: {
+				method: 'PUT'
+			}
+		});
+	}
+]);
+(function () {
+    'use strict';
+
+    angular
+        .module('team-rooms')
+        .factory('TeamRoomsForm', [ 'ConfRoomTablesMembers',function  (ConfRoomTablesMembers) {
+
+        var getFormFields = function (disabled) {
+
+
+            //Roommate1: {
+            //  type: Schema.Types.ObjectId,
+            //      ref: 'WholeTeamList'
+            //},
+            //Roommate2: {
+            //  type: Schema.Types.ObjectId,
+            //      ref: 'WholeTeamList'
+            //},
+            //RoomNumber: {
+            //  type: String,
+            //default: '',
+            //      trim: true
+            //},
+            //Building: {
+            //  type: String,
+            //default: '',
+            //      trim: true
+            //},
+
+            var fields = [
+                {
+                    key: 'Roommate1',
+                    type: 'select',
+                    templateOptions: {
+                        label: 'Roommate 1:',
+                        options: ConfRoomTablesMembers.getTeamRetreat()
+                    }
+                },
+                {
+                    key: 'Roommate2',
+                    type: 'select',
+                    templateOptions: {
+                        label: 'Roommate 2:',
+                        options: ConfRoomTablesMembers.getTeamRetreat()
+                    }
+                },
+                {
+                    key: 'RoomNumber',
+                    type: 'input',
+                    templateOptions: {
+                        label: 'Room Number:',
+                        disabled: disabled
+                    }
+                },
+                {
+                    key: 'Building',
+                    type: 'input',
+                    templateOptions: {
+                        label: 'Building:',
+                        disabled: disabled
+                    }
+                },
+
+            ];
+
+            return fields;
+
+        };
+
+        var service = {
+            getFormFields: getFormFields
+        };
+
+        return service;
+
+
+        }])
+
+})();
+
+'use strict';
+
+//Conf room tables service used to communicate Conf room tables REST endpoints
+angular.module('team-rooms')
+    .service('ConfRoomTablesMembers', function(){})
+    .factory('ConfRoomTablesMembers', [ 'WholeTeamLists', 'TableSettings', 'Pilgrims', '$resource',
+	function( WholeTeamLists, TableSettings, Pilgrims , $resource) {
+
+		var getTeamRetreat =  function() {
+            var returnList = [];
+            var nowWholeList = $resource('/whole-team-lists?count=999&page=1');
+                var answer = nowWholeList.get(function() {
+                    console.log(answer);
+                    for (var i = 0; i < answer.total; i++) {
+                        var value = [];
+                        if (answer.results[i].Building == 'Retreat Center') {
+                            value['name'] = answer.results[i].Name;
+                            value['value'] = answer.results[i]._id;
+                            returnList.push(value);
+                        }
+                    }
+                console.log(returnList);
+            });
+			return returnList;
+		};
+
+
+        return {
+            getTeamRetreat: getTeamRetreat
+        }
+
+
+
+	}
+
+
+]);
 
 'use strict';
 
@@ -788,8 +1977,8 @@ angular.module('whole-team-lists').run(['Menus',
 		Menus.addSubMenuItem('topbar', 'whole-team-lists', 'List Whole team lists', 'whole-team-lists');
 		Menus.addSubMenuItem('topbar', 'whole-team-lists', 'List Paid team lists', 'paid-team-lists');
 		//Menus.addSubMenuItem('topbar', 'whole-team-lists', 'New Whole team list', 'whole-team-lists/create');
-		Menus.addMenuItem('topbar', 'Paid', 'paid-team-lists', 'button', '/paid-team-lists');
-		Menus.addMenuItem('topbar', 'Summary', 'paid-team-summary-lists', 'button', '/paid-team-summary-lists');
+		Menus.addMenuItem('topbar', 'Pd.', 'paid-team-lists', 'button', '/paid-team-lists');
+		Menus.addMenuItem('topbar', 'Summary RC', 'paid-team-summary-lists', 'button', '/paid-team-summary-lists');
 	}
 ]);
 
@@ -831,69 +2020,167 @@ angular.module('whole-team-lists').config(['$stateProvider',
 
 // Whole team lists controller
 angular.module('whole-team-lists').controller('WholeTeamListsController', ['$scope', '$stateParams', '$location', 'Authentication', 'WholeTeamLists', 'TableSettings', 'WholeTeamListsForm',
-	function($scope, $stateParams, $location, Authentication, WholeTeamLists, TableSettings, WholeTeamListsForm ) {
-		$scope.authentication = Authentication;
-		$scope.tableParams = TableSettings.getParams(WholeTeamLists);
-		$scope.wholeTeamList = {};
+    function ($scope, $stateParams, $location, Authentication, WholeTeamLists, TableSettings, WholeTeamListsForm) {
+        $scope.authentication = Authentication;
+        $scope.tableParams = TableSettings.getParams(WholeTeamLists);
+        $scope.wholeTeamList = {};
+        $scope.retreatCenterAll = function(stuff) {
+            var sumValue =0;
+            if (stuff.length == 0 ){
+                return 0;
+            }
+            for (var i = 0; i < stuff.length; i++) {
+                if ( stuff[i].Building == 'Retreat Center') {
+                    sumValue++;
+                }
+            }
+            return sumValue;
+        };
+        /**
+         * Checking for each team member in the Retreat Center that has paid
+         * @param stuff
+         * @returns {number}
+         */
+        $scope.retreatCenterPaid= function(stuff) {
+            var sumValue =0;
+            if (stuff.length == 0 ){
+                return 0;
+            }
+            for (var i = 0; i < stuff.length; i++) {
+                if ( stuff[i].Building == 'Retreat Center') {
+                    if (stuff[i].Paid == 'Yes' ){
+                    sumValue++;
+                }}
+            }
+            return sumValue;
+        };
+        $scope.retreatCenterPaidWithRoomMate= function(stuff) {
+            var sumValue =0;
+            if (stuff.length == 0 ){
+                return 0;
+            }
+            for (var i = 0; i < stuff.length; i++) {
+                var value = stuff[i];
+                if ( stuff[i].Building == 'Retreat Center') {
+                    if (stuff[i].Paid == 'Yes' ){
+                        if (value.Roommate.length != 0) {
+                            sumValue++;
+                }}}
+            }
+            return sumValue;
+        };
+        $scope.retreatCenterPaidWithOutRoomMate= function(stuff) {
+            var sumValue =0;
+            if (stuff.length == 0 ){
+                return 0;
+            }
+            for (var i = 0; i < stuff.length; i++) {
+                var value = stuff[i];
+                if ( stuff[i].Building == 'Retreat Center') {
+                    if (stuff[i].Paid == 'Yes' ){
+                        if (value.Roommate.length == 0) {
+                            sumValue++;
+                        }}}
 
-		$scope.setFormFields = function(disabled) {
-			$scope.formFields = WholeTeamListsForm.getFormFields(disabled);
-		};
+            }
+            return sumValue;
+        };
+        $scope.retreatCenterNeedRoomMate= function(stuff) {
+            var sumValue = ' ';
+            if (stuff.length == 0 ){
+                return ' ';
+            }
+            for (var i = 0; i < stuff.length; i++) {
+                var value = stuff[i];
+                if ( stuff[i].Building == 'Retreat Center') {
+                    if (stuff[i].Paid == 'Yes' ){
+                        if (value.Roommate.length == 0) {
+                            sumValue += value.Name + ',';
+                        }}}
+
+            }
+            return sumValue;
+        };
+        $scope.cvsMe = function(tableData) {
+            var keysS =[];
+            angular.forEach(tableData[0], function(value, key) {
+                this.push(key);
+            }, keysS);
+            console.log(keysS);
+            tableData.unshift(keysS);
+            return(tableData);
+        };
+        $scope.totalUnPaid= function(stuff) {
+            var sumValue =0;
+            if (stuff.length == 0 ){
+                return 0;
+            }
+            for (var i = 0; i < stuff.length; i++) {
+                if ( stuff[i].Paid == 'No') {
+                    sumValue++;
+                }
+            }
+            return sumValue;
+        };
 
 
-		// Create new Whole team list
-		$scope.create = function() {
-			var wholeTeamList = new WholeTeamLists($scope.wholeTeamList);
-
-			// Redirect after save
-			wholeTeamList.$save(function(response) {
-				$location.path('whole-team-lists/' + response._id);
-			}, function(errorResponse) {
-				$scope.error = errorResponse.data.message;
-			});
-		};
-
-		// Remove existing Whole team list
-		$scope.remove = function(wholeTeamList) {
-
-			if ( wholeTeamList ) {
-				wholeTeamList = WholeTeamLists.get({wholeTeamListId:wholeTeamList._id}, function() {
-					wholeTeamList.$remove();
-					$scope.tableParams.reload();
-				});
-
-			} else {
-				$scope.wholeTeamList.$remove(function() {
-					$location.path('wholeTeamLists');
-				});
-			}
-
-		};
-
-		// Update existing Whole team list
-		$scope.update = function() {
-			var wholeTeamList = $scope.wholeTeamList;
-
-			wholeTeamList.$update(function() {
-				$location.path('whole-team-lists/' + wholeTeamList._id);
-			}, function(errorResponse) {
-				$scope.error = errorResponse.data.message;
-			});
-		};
+        $scope.setFormFields = function (disabled) {
+            $scope.formFields = WholeTeamListsForm.getFormFields(disabled);
+        };
 
 
+        // Create new Whole team list
+        $scope.create = function () {
+            var wholeTeamList = new WholeTeamLists($scope.wholeTeamList);
 
-		$scope.toViewWholeTeamList = function() {
-			$scope.wholeTeamList = WholeTeamLists.get( {wholeTeamListId: $stateParams.wholeTeamListId} );
-			$scope.setFormFields(true);
-		};
+            // Redirect after save
+            wholeTeamList.$save(function (response) {
+                $location.path('whole-team-lists/' + response._id);
+            }, function (errorResponse) {
+                $scope.error = errorResponse.data.message;
+            });
+        };
 
-		$scope.toEditWholeTeamList = function() {
-			$scope.wholeTeamList = WholeTeamLists.get( {wholeTeamListId: $stateParams.wholeTeamListId} );
-			$scope.setFormFields(false);
-		};
+        // Remove existing Whole team list
+        $scope.remove = function (wholeTeamList) {
 
-	}
+            if (wholeTeamList) {
+                wholeTeamList = WholeTeamLists.get({wholeTeamListId: wholeTeamList._id}, function () {
+                    wholeTeamList.$remove();
+                    $scope.tableParams.reload();
+                });
+
+            } else {
+                $scope.wholeTeamList.$remove(function () {
+                    $location.path('wholeTeamLists');
+                });
+            }
+
+        };
+
+        // Update existing Whole team list
+        $scope.update = function () {
+            var wholeTeamList = $scope.wholeTeamList;
+
+            wholeTeamList.$update(function () {
+                $location.path('whole-team-lists/' + wholeTeamList._id);
+            }, function (errorResponse) {
+                $scope.error = errorResponse.data.message;
+            });
+        };
+
+
+        $scope.toViewWholeTeamList = function () {
+            $scope.wholeTeamList = WholeTeamLists.get({wholeTeamListId: $stateParams.wholeTeamListId});
+            $scope.setFormFields(true);
+        };
+
+        $scope.toEditWholeTeamList = function () {
+            $scope.wholeTeamList = WholeTeamLists.get({wholeTeamListId: $stateParams.wholeTeamListId});
+            $scope.setFormFields(false);
+        };
+
+    }
 
 ]);
 
@@ -910,7 +2197,7 @@ angular.module('whole-team-lists').factory('WholeTeamLists', ['$resource',
 		});
 	}
 ]);
-(function() {
+(function () {
     'use strict';
 
     angular
@@ -919,125 +2206,125 @@ angular.module('whole-team-lists').factory('WholeTeamLists', ['$resource',
 
     function factory() {
 
-      var getFormFields = function(disabled) {
+        var getFormFields = function (disabled) {
 
-        var fields = [
-  				{
-  					key: 'Name',
-  					type: 'input',
-  					templateOptions: {
-  			      label: 'Name:',
-  						disabled: disabled
-  			    }
-  				},
-          {
-            key: 'Committee',
-            type: 'input',
-            templateOptions: {
-              label: 'Committee:',
-              disabled: disabled
-            }
-          },
-          {
-            key: 'Paid',
-            type: 'radio',
-            templateOptions: {
-              label: 'Paid:',
-              disabled: disabled,
-              options : [{name:"Yes", value:"Yes"},
-                {name:"No", value:"No"},
-              ]
-            }
-          },
-          {
-            key: 'PaidAmount',
-            type: 'input',
-            templateOptions: {
-              label: 'Paid Amount:',
-              disabled: disabled
-            }
-          },
-          {
-            key: 'Roommate',
-            type: 'input',
-            templateOptions: {
-              label: 'Roommate:',
-              disabled: disabled,
-            }
-          },
-          {
-            key: 'Building',
-            type: 'select',
-            templateOptions: {
-              label: 'Building:',
-              disabled: disabled,
-              options : [{name:"Retreat Center", value:"Retreat Center"},
-                {name:"Campers", value:"Campers"},
-                {name:"None", value:"None"},
-                {name:"Main Lodge - East Wing", value:"Main Lodge - East Wing"}]
-            }
-          },
-          {
-            key: 'Chairperson',
-            type: 'input',
-            templateOptions: {
-              label: 'Chairperson:',
-              disabled: disabled
-            }
-          },
-          {
-            key: 'Talk',
-            type: 'input',
-            templateOptions: {
-              label: 'Talk:',
-              disabled: disabled
-            }
-          },
-          {
-            key: 'Phone',
-            type: 'input',
-            templateOptions: {
-              label: 'Phone:',
-              disabled: disabled
-            }
-          },
-          {
-            key: 'Email',
-            type: 'input',
-            templateOptions: {
-              label: 'Email:',
-              disabled: disabled
-            }
-          },
-          {
-            key: 'Street_Address',
-            type: 'input',
-            templateOptions: {
-              label: 'Street Address:',
-              disabled: disabled
-            }
-          },
-          {
-            key: 'City_State_Zip',
-            type: 'input',
-            templateOptions: {
-              label: 'City, State, Zip:',
-              disabled: disabled
-            }
-          },
+            var fields = [
+                {
+                    key: 'Name',
+                    type: 'input',
+                    templateOptions: {
+                        label: 'Name:',
+                        disabled: disabled
+                    }
+                },
+                {
+                    key: 'Committee',
+                    type: 'input',
+                    templateOptions: {
+                        label: 'Committee:',
+                        disabled: disabled
+                    }
+                },
+                {
+                    key: 'Paid',
+                    type: 'radio',
+                    templateOptions: {
+                        label: 'Paid:',
+                        disabled: disabled,
+                        options: [{name: "Yes", value: "Yes"},
+                            {name: "No", value: "No"},
+                        ]
+                    }
+                },
+                {
+                    key: 'PaidAmount',
+                    type: 'input',
+                    templateOptions: {
+                        label: 'Paid Amount:',
+                        disabled: disabled
+                    }
+                },
+                {
+                    key: 'Roommate',
+                    type: 'input',
+                    templateOptions: {
+                        label: 'Roommate:',
+                        disabled: disabled,
+                    }
+                },
+                {
+                    key: 'Building',
+                    type: 'select',
+                    templateOptions: {
+                        label: 'Building:',
+                        disabled: disabled,
+                        options: [{name: "Retreat Center", value: "Retreat Center"},
+                            {name: "Campers", value: "Campers"},
+                            {name: "None", value: "None"},
+                            {name: "Main Lodge - East Wing", value: "Main Lodge - East Wing"}]
+                    }
+                },
+                {
+                    key: 'Chairperson',
+                    type: 'input',
+                    templateOptions: {
+                        label: 'Chairperson:',
+                        disabled: disabled
+                    }
+                },
+                {
+                    key: 'Talk',
+                    type: 'input',
+                    templateOptions: {
+                        label: 'Talk:',
+                        disabled: disabled
+                    }
+                },
+                {
+                    key: 'Phone',
+                    type: 'input',
+                    templateOptions: {
+                        label: 'Phone:',
+                        disabled: disabled
+                    }
+                },
+                {
+                    key: 'Email',
+                    type: 'input',
+                    templateOptions: {
+                        label: 'Email:',
+                        disabled: disabled
+                    }
+                },
+                {
+                    key: 'Street_Address',
+                    type: 'input',
+                    templateOptions: {
+                        label: 'Street Address:',
+                        disabled: disabled
+                    }
+                },
+                {
+                    key: 'City_State_Zip',
+                    type: 'input',
+                    templateOptions: {
+                        label: 'City, State, Zip:',
+                        disabled: disabled
+                    }
+                },
 
-  			];
+            ];
 
-        return fields;
+            return fields;
 
-      };
+        };
 
-      var service = {
-        getFormFields: getFormFields
-      };
+        var service = {
+            getFormFields: getFormFields
+        };
 
-      return service;
+        return service;
 
-  }
+    }
 
 })();

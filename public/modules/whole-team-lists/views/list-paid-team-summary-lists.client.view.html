@@ -38,6 +38,8 @@
                 <h3>Retreat Center Paid without Roommate: {{retreatCenterPaidWithOutRoomMate(tableParams.data)}}</h3>
                 <h3>Retreat Center Need Roommate: {{retreatCenterNeedRoomMate(tableParams.data)}}</h3>
                 <h3>Total UnPaid:{{totalUnPaid(tableParams.data)}}</h3>
+                <a type="button" class="btn btn-success " title='Export' ng-csv="cvsMe(tableParams.data)"  filename="paid-summary.csv">
+                    <span class="glyphicon glyphicon-export"></span></a>
 
             </tr>
 

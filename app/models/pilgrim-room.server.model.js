@@ -10,10 +10,31 @@ var mongoose = require('mongoose'),
  * Pilgrim room Schema
  */
 var PilgrimRoomSchema = new Schema({
-	name: {
+	TeamRoommate: {
+		type: Schema.Types.ObjectId,
+		ref: 'WholeTeamList'
+	},
+	PilgrimRoommate1: {
+		type:Schema.Types.ObjectId,
+		ref: 'Pilgrim'
+	},
+	PilgrimRoommate2: {
+		type:Schema.Types.ObjectId,
+		ref: 'Pilgrim'
+	},
+	RoomNumber: {
 		type: String,
 		default: '',
-		required: 'Please fill Pilgrim room name',
+		trim: true
+	},
+	UpDown: {
+		type: String,
+		default: '',
+		trim: true
+	},
+	Building: {
+		type: String,
+		default: '',
 		trim: true
 	},
 	created: {

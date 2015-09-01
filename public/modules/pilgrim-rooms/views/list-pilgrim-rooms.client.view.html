@@ -10,9 +10,21 @@
     </div>
 
     <div>
-        <table ng-table="tableParams" show-filter="true">
+        <table ng-table="tableParams"  class="table table-striped table-bordered table-condensed ng-table-responsive" show-filter="true">
             <tr ng-repeat="pilgrimRoom in $data">
-                <td data-title="'Name'" sortable="'name'" filter="{ 'name': 'text' }">{{pilgrimRoom.name}}</td>
+                <!--//TeamRoommate: {-->
+                <!--//PilgrimRoommate1: {-->
+                <!--//PilgrimRoommate2: {-->
+                <!--//RoomNumber: {-->
+                <!--//UpDown: {-->
+                <!--//Building: {-->
+
+                <td data-title="'Building'" sortable="'Building'" filter="{ 'Building': 'text' }">{{pilgrimRoom.Building}}</td>
+                <td data-title="'RoomNumber'" sortable="'RoomNumber'" filter="{ 'RoomNumber': 'text' }">{{pilgrimRoom.RoomNumber}}</td>
+                <td data-title="'UpDown'" sortable="'UpDown'" filter="{ 'UpDown': 'text' }">{{pilgrimRoom.UpDown}}</td>
+                <td data-title="'TeamRoommate'" sortable="'TeamRoommate'" filter="{ 'TeamRoommate': 'text' }">{{pilgrimRoom.TeamRoommate}}</td>
+                <td data-title="'PilgrimRoommate1'" sortable="'PilgrimRoommate1'" filter="{ 'PilgrimRoommate1': 'text' }">{{pilgrimRoom.PilgrimRoommate1}}</td>
+                <td data-title="'PilgrimRoommate2'" sortable="'PilgrimRoommate2'" filter="{ 'PilgrimRoommate2': 'text' }">{{pilgrimRoom.PilgrimRoommate2}}</td>
                 <td>
                     <div class="table-actions">
                 <td>
@@ -28,6 +40,10 @@
                   			</a>
                     </div>
                 </td>
+            </tr>
+            <tr>
+                <a type="button" class="btn btn-success " title='Export' ng-csv="cvsMe(tableParams.data)"  filename="pilgrim-rooms.csv">
+                    <span class="glyphicon glyphicon-export"></span></a>
             </tr>
         </table>
     </div>
