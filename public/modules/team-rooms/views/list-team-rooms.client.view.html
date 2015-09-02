@@ -20,8 +20,8 @@
 
                 <td data-title="'Building'" sortable="'Building'" filter="{ 'Building': 'text' }">{{teamRoom.Building}}</td>
                 <td data-title="'RoomNumber'" sortable="'RoomNumber'" filter="{ 'RoomNumber': 'text' }">{{teamRoom.RoomNumber}}</td>
-                <td data-title="'Roommate1'" sortable="'Roommate1'" filter="{ 'Roommate1': 'text' }">{{teamRoom.Roommate1}}</td>
-                <td data-title="'Roommate2'" sortable="'Roommate2'" filter="{ 'Roommate2': 'text' }">{{teamRoom.Roommate2}}</td>
+                <td data-title="'Roommate1'" sortable="'Roommate1'" filter="{ 'Roommate1': 'text' }"><team-room-team-member-name memberid="{{teamRoom.Roommate1}}"/></td>
+                <td data-title="'Roommate2'" sortable="'Roommate2'" filter="{ 'Roommate2': 'text' }"><team-room-team-member-name memberid="{{teamRoom.Roommate2}}"/></td>
                 <td>
                     <div class="table-actions">
                 <td>
@@ -41,6 +41,8 @@
             <tr>
                 <a type="button" class="btn btn-success " title='Export' ng-csv="cvsMe(tableParams.data)"  filename="team-rooms.csv">
                     <span class="glyphicon glyphicon-export"></span></a>
+                <a type="button" disabled="{{tableParams.data.length > 0}}" class="btn btn-info " title='Pull' ng-click="pullDataFromMains(tableParams.data)" >
+                    <span class="glyphicon glyphicon-inbox"></span></a>
             </tr>
         </table>
     </div>

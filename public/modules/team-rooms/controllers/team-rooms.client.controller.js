@@ -1,8 +1,8 @@
 'use strict';
 
 // Team rooms controller
-angular.module('team-rooms').controller('TeamRoomsController', ['$scope', '$stateParams', '$location', 'Authentication', 'TeamRooms', 'TableSettings', 'TeamRoomsForm',
-	function($scope, $stateParams, $location, Authentication, TeamRooms, TableSettings, TeamRoomsForm ) {
+angular.module('team-rooms').controller('TeamRoomsController', ['$scope', '$stateParams', '$location', 'Authentication', 'TeamRooms', 'TableSettings', 'TeamRoomsForm','$resource',
+	function($scope, $stateParams, $location, Authentication, TeamRooms, TableSettings, TeamRoomsForm, $resource ) {
 		$scope.authentication = Authentication;
 		$scope.tableParams = TableSettings.getParams(TeamRooms);
 		$scope.teamRoom = {};
@@ -20,6 +20,51 @@ angular.module('team-rooms').controller('TeamRoomsController', ['$scope', '$stat
 			tableData.unshift(keysS);
 			return(tableData);
 		};
+
+		$scope.pullDataFromMains =  function(tableData) {
+			var nowWholeList = $resource('/whole-team-lists?count=999&page=1');
+			var answer = nowWholeList.get(function() {
+				var usedIDs = [];
+				console.log(answer);
+				for (var i = 0; i < answer.total; i++) {
+					var value = [];
+					if (answer.results[i].Building == 'Retreat Center') {
+						console.log(usedIDs + ' ' + answer.results[i]._id + ' ' + compareIt(usedIDs,answer.results[i]._id));
+						if ( compareIt(usedIDs,answer.results[i]._id) == -1) {
+							value['Building'] = 'Retreat Center';
+							value['RoomNumber'] = '0';
+							value['Roommate1'] = answer.results[i]._id;
+							usedIDs.push(answer.results[i]._id);
+							var roomMate2 = 'empty';
+							for (var j = 0; j < answer.total; j++) {
+								if (answer.results[j].Name == answer.results[i].Roommate) {
+									roomMate2 = answer.results[j]._id;
+									usedIDs.push(answer.results[j]._id);
+									break;
+								}
+							}
+							value['Roommate2'] = roomMate2;
+							var putting = $resource('/team-rooms');
+							var jval = '{ "Building":"Retreat Center", "RoomNumber":"0", "Roommate1":"' + value['Roommate1'] + '","Roommate2":"' + value['Roommate2'] + '"}';
+							putting.save(jval);
+							$scope.tableParams.data.push(value);
+						}
+						else {
+							console.log("found dupe");
+						}
+					}
+				}
+			});
+		};
+
+		var compareIt = function(arrayD,valueD) {
+			for (var z = 0; z < arrayD.length; z++) {
+				if (arrayD[z] ===  valueD) {
+					return z;
+				}
+			}
+			return -1;
+		}
 
 		// Create new Team room
 		$scope.create = function() {
