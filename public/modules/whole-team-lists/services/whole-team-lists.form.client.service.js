@@ -54,6 +54,14 @@
                     }
                 },
                 {
+                    key: 'RoomNumber',
+                    type: 'input',
+                    templateOptions: {
+                        label: 'RoomNumber:',
+                        disabled: disabled,
+                    }
+                },
+                {
                     key: 'Building',
                     type: 'select',
                     templateOptions: {
@@ -78,6 +86,14 @@
                     type: 'input',
                     templateOptions: {
                         label: 'Talk:',
+                        disabled: disabled
+                    }
+                },
+                {
+                    key: 'Table',
+                    type: 'input',
+                    templateOptions: {
+                        label: 'Table:',
                         disabled: disabled
                     }
                 },

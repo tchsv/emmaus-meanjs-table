@@ -1,1 +1,1 @@
-zip -r walk_data.zip walk_data/
+zip -r walk_data-$(date +%Y-%m-%d-%H-%M-%S).zip walk_data/

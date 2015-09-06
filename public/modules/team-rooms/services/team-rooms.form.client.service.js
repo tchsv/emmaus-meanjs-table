@@ -3,7 +3,7 @@
 
     angular
         .module('team-rooms')
-        .factory('TeamRoomsForm', [ 'ConfRoomTablesMembers',function  (ConfRoomTablesMembers) {
+        .factory('TeamRoomsForm', [ 'TeamRoomMembers',function  (TeamRoomMembers) {
 
         var getFormFields = function (disabled) {
 
@@ -34,7 +34,7 @@
                     templateOptions: {
                         label: 'Roommate 1:',
                         disabled: disabled,
-                        options: ConfRoomTablesMembers.getTeamRetreat()
+                        options: TeamRoomMembers.getTeamRetreat()
                     }
                 },
                 {
@@ -43,7 +43,7 @@
                     templateOptions: {
                         label: 'Roommate 2:',
                         disabled: disabled,
-                        options: ConfRoomTablesMembers.getTeamRetreat()
+                        options: TeamRoomMembers.getTeamRetreat()
                     }
                 },
                 {
@@ -84,6 +84,7 @@
                             {'name':'312','value':'312'},
                             {'name':'313','value':'313'},
                             {'name':'314','value':'314'},
+                            {'name':'NurseRoom','value':'NurseRoom'},
                             {'name':'HillCrest1','value':'HillCrest1'},
                         ]
                     }

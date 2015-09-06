@@ -40,9 +40,11 @@
             </tr>
             <tr>
                 <a type="button" class="btn btn-success " title='Export' ng-csv="cvsMe(tableParams.data)"  filename="team-rooms.csv">
-                    <span class="glyphicon glyphicon-export"></span></a>
+                    <span class="glyphicon glyphicon-export"></span>Export To CSV</a>
                 <a type="button" disabled="{{tableParams.data.length > 0}}" class="btn btn-info " title='Pull' ng-click="pullDataFromMains(tableParams.data)" >
-                    <span class="glyphicon glyphicon-inbox"></span></a>
+                    <span class="glyphicon glyphicon-inbox"></span>Import Room Mates From Main List</a>
+                <a type="button"  class="btn btn-info " title='Pull' ng-click="pushRoomNumberToTeamTables(tableParams.data)" >
+                    <span class="glyphicon glyphicon-bullhorn"></span>Export Room Number to Main List</a>
             </tr>
         </table>
     </div>

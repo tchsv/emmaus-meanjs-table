@@ -29,7 +29,12 @@ var WholeTeamListSchema = new Schema({
 	},
 	Talk: {
 		type: String,
-		default: '',
+		default: 'N/A',
+		trim: true
+	},
+	Table: {
+		type: String,
+		default: 'N/A',
 		trim: true
 	},
 	Phone: {
@@ -63,6 +68,11 @@ var WholeTeamListSchema = new Schema({
 		trim: true
 	},
 	Roommate: {
+		type: String,
+		default: '',
+		trim: true
+	},
+	RoomNumber: {
 		type: String,
 		default: '',
 		trim: true

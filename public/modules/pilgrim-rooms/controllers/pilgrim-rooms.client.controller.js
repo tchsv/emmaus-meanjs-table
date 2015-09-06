@@ -1,8 +1,9 @@
 'use strict';
 
 // Pilgrim rooms controller
-angular.module('pilgrim-rooms').controller('PilgrimRoomsController', ['$scope', '$stateParams', '$location', 'Authentication', 'PilgrimRooms', 'TableSettings', 'PilgrimRoomsForm', 'PilgrimRoomTablesMembers', '$q',
-    function ($scope, $stateParams, $location, Authentication, PilgrimRooms, TableSettings, PilgrimRoomsForm, PilgrimRoomTablesMembers, $q) {
+angular.module('pilgrim-rooms').controller('PilgrimRoomsController', ['$scope', '$stateParams', '$location',
+    'Authentication', 'PilgrimRooms', 'TableSettings', 'PilgrimRoomsForm', 'PilgrimRoomTablesMembers', '$q','$resource',
+    function ($scope, $stateParams, $location, Authentication, PilgrimRooms, TableSettings, PilgrimRoomsForm, PilgrimRoomTablesMembers, $q, $resource) {
         $scope.authentication = Authentication;
         $scope.tableParams = TableSettings.getParams(PilgrimRooms);
         $scope.pilgrimRoom = {};
@@ -11,15 +12,6 @@ angular.module('pilgrim-rooms').controller('PilgrimRoomsController', ['$scope', 
             $scope.formFields = PilgrimRoomsForm.getFormFields(disabled);
         };
 
-        $scope.cvsMe7 = function (tableData) {
-            var keysS = [];
-            angular.forEach(tableData[0], function (value, key) {
-                this.push(key);
-            }, keysS);
-            console.log(keysS);
-            tableData.unshift(keysS);
-            return (tableData);
-        };
         $scope.cvsMe = function (tableData) {
             var deferred = $q.defer();
             var reJiggered = [];
@@ -27,16 +19,6 @@ angular.module('pilgrim-rooms').controller('PilgrimRoomsController', ['$scope', 
             angular.forEach(tableData[0], function (value, key) {
                 this.push(key);
             }, keysS);
-
-            //key: 'TeamRoommate',
-            //key: 'PilgrimRoommate1',
-            //key: 'PilgrimRoommate2',
-            //key: 'PilgrimRoommate3',
-            //key: 'RoomNumber',
-            //key: 'UpDown',
-            //key: 'Building',
-
-
             keysS = {
                 'Building': 'Building',
                 'RoomNumber': 'RoomNumber',
@@ -60,16 +42,6 @@ angular.module('pilgrim-rooms').controller('PilgrimRoomsController', ['$scope', 
                         reJig.PilgrimRoommate1 = getNameFromList(pilgrimList, tableData[i]['PilgrimRoommate1'], true);
                         reJig.PilgrimRoommate2 = getNameFromList(pilgrimList, tableData[i]['PilgrimRoommate2'], true);
                         reJig.PilgrimRoommate3 = getNameFromList(pilgrimList, tableData[i]['PilgrimRoommate3'], true);
-                        //var reJig = [];
-                        //reJig["Building"]= tableData[i]['Building'] ;
-                        //reJig["RoomNumber"]= tableData[i]['RoomNumber'];
-                        //reJig["RoomMate1"]=tableData[i]['RoomMate1'];
-                        //reJig["RoomMate2"]=tableData[i]['RoomMate2'];
-                        //var reJig = " { ";
-                        //reJig += ' "Building":"' + tableData[i]['Building'] + '", ';
-                        //reJig += ' "RoomNumber":"' + tableData[i]['RoomNumber'] + '", ';
-                        //reJig += ' "RoomMate1":"' + tableData[i]['RoomMate1'] + '", ';
-                        //reJig += ' "RoomMate2":"' + tableData[i]['RoomMate2'] + '" } ';
                         reJiggered.push(reJig);
                     }
                     reJiggered.unshift(keysS);
@@ -78,18 +50,6 @@ angular.module('pilgrim-rooms').controller('PilgrimRoomsController', ['$scope', 
                 });
             });
 
-            //var returnList = [];
-            //var nowWholeList = $resource('/whole-team-lists?count=999&page=1');
-            //var answer = nowWholeList.get(function() {
-            //	for (var i = 0; i < answer.total; i++) {
-            //		var value = [];
-            //		if (answer.results[i].Building == 'Retreat Center') {
-            //			value['name'] = answer.results[i].Name;
-            //			value['value'] = answer.results[i]._id;
-            //			returnList.push(value);
-            //		}
-            //	}
-            //});
             return deferred.promise;
         };
         var getNameFromList = function (list, id) {
@@ -101,7 +61,53 @@ angular.module('pilgrim-rooms').controller('PilgrimRoomsController', ['$scope', 
                 }
             }
             return returnName;
+        };
+
+        function pushTableToPilgrimsTable(id, RoomNumber) {
+            if (id == 'empty') {
+                return;
+            }
+            var pilgrim1TableGet = $resource('/pilgrims/' + id);
+            pilgrim1TableGet.get(function (tableGetValue) {
+                tableGetValue.RoomNumber = RoomNumber;
+                var tableUpdate = $resource('/pilgrims/' + id, null,
+                    {
+                        'update': {method: 'PUT'}
+                    });
+                tableUpdate.update(tableGetValue);
+            });
         }
+        function pushTableToTeamsTable(id, RoomNumber) {
+            if (id == 'Empty') {
+                return;
+            }
+            var teamTableGet = $resource('/whole-team-lists/' + id);
+            teamTableGet.get(function (tableGetValue) {
+                tableGetValue.RoomNumber = RoomNumber;
+                var tableUpdate = $resource('/whole-team-lists/' + id, null,
+                    {
+                        'update': {method: 'PUT'}
+                    });
+                tableUpdate.update(tableGetValue);
+            });
+        }
+
+        $scope.pushRoomNumberToMainTables = function (tableData) {
+            for (var i = 0; i < tableData.length; i++) {
+                var RoomNumber = tableData[i]['RoomNumber'];
+                // get from wholelist this tableleader...  change Table value...  update wholelist with this table leader.
+                pushTableToTeamsTable( tableData[i]['TeamRoommate'],RoomNumber);
+                pushTableToPilgrimsTable(tableData[i]['PilgrimRoommate1'], RoomNumber);
+                pushTableToPilgrimsTable(tableData[i]['PilgrimRoommate2'], RoomNumber);
+                pushTableToPilgrimsTable(tableData[i]['PilgrimRoommate3'], RoomNumber);
+            }
+
+        };
+
+
+
+
+
 
         // Create new Pilgrim room
         $scope.create = function () {

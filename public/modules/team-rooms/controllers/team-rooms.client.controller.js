@@ -36,16 +36,6 @@ angular.module('team-rooms').controller('TeamRoomsController', ['$scope', '$stat
 					reJig.RoomNumber = tableData[i]['RoomNumber'];
 					reJig.RoomMate1 = getNameFromList(returnList,tableData[i]['Roommate1']);
 					reJig.RoomMate2 = getNameFromList(returnList,tableData[i]['Roommate2']);
-					//var reJig = [];
-					//reJig["Building"]= tableData[i]['Building'] ;
-					//reJig["RoomNumber"]= tableData[i]['RoomNumber'];
-					//reJig["RoomMate1"]=tableData[i]['RoomMate1'];
-					//reJig["RoomMate2"]=tableData[i]['RoomMate2'];
-					//var reJig = " { ";
-					//reJig += ' "Building":"' + tableData[i]['Building'] + '", ';
-					//reJig += ' "RoomNumber":"' + tableData[i]['RoomNumber'] + '", ';
-					//reJig += ' "RoomMate1":"' + tableData[i]['RoomMate1'] + '", ';
-					//reJig += ' "RoomMate2":"' + tableData[i]['RoomMate2'] + '" } ';
 					reJiggered.push(reJig);
 				}
 				reJiggered.unshift(keysS);
@@ -64,6 +54,33 @@ angular.module('team-rooms').controller('TeamRoomsController', ['$scope', '$stat
 			}
 			return returnName;
 		}
+
+		function pushTableToTeamsTable(id, RoomNumber) {
+			if (id == 'Empty') {
+				return;
+			}
+			var teamTableGet = $resource('/whole-team-lists/' + id);
+			teamTableGet.get(function (tableGetValue) {
+				tableGetValue.RoomNumber = RoomNumber;
+				var tableUpdate = $resource('/whole-team-lists/' + id, null,
+						{
+							'update': {method: 'PUT'}
+						});
+				tableUpdate.update(tableGetValue);
+			});
+		}
+
+		$scope.pushRoomNumberToTeamTables = function (tableData) {
+			for (var i = 0; i < tableData.length; i++) {
+				var RoomNumber = tableData[i]['RoomNumber'];
+				// get from wholelist this tableleader...  change Table value...  update wholelist with this table leader.
+				pushTableToTeamsTable( tableData[i]['Roommate1'],RoomNumber);
+				pushTableToTeamsTable( tableData[i]['Roommate2'],RoomNumber);
+			}
+
+		};
+
+
 
 		$scope.pullDataFromMains =  function(tableData) {
 			var nowWholeList = $resource('/whole-team-lists?count=999&page=1');

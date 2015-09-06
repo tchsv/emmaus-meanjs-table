@@ -2,8 +2,8 @@
 
 //Conf room tables service used to communicate Conf room tables REST endpoints
 angular.module('team-rooms')
-    .service('ConfRoomTablesMembers', function(){})
-    .factory('ConfRoomTablesMembers', [ 'WholeTeamLists', 'TableSettings', 'Pilgrims', '$resource',
+    .service('TeamRoomMembers', function(){})
+    .factory('TeamRoomMembers', [ 'WholeTeamLists', 'TableSettings', 'Pilgrims', '$resource',
 	function( WholeTeamLists, TableSettings, Pilgrims , $resource) {
 
 		var getTeamRetreat =  function() {

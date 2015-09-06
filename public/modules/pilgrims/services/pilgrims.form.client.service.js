@@ -48,6 +48,14 @@
                     }
                 },
                 {
+                    key: 'Phone',
+                    type: 'input',
+                    templateOptions: {
+                        label: 'Phone:',
+                        disabled: disabled
+                    }
+                },
+                {
                     key: 'Church',
                     type: 'input',
                     templateOptions: {
@@ -60,6 +68,14 @@
                     type: 'input',
                     templateOptions: {
                         label: 'Age:',
+                        disabled: disabled
+                    }
+                },
+                {
+                    key: 'Table',
+                    type: 'input',
+                    templateOptions: {
+                        label: 'Table:',
                         disabled: disabled
                     }
                 },
