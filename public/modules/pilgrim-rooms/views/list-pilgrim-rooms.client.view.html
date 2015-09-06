@@ -22,9 +22,10 @@
                 <td data-title="'Building'" sortable="'Building'" filter="{ 'Building': 'text' }">{{pilgrimRoom.Building}}</td>
                 <td data-title="'RoomNumber'" sortable="'RoomNumber'" filter="{ 'RoomNumber': 'text' }">{{pilgrimRoom.RoomNumber}}</td>
                 <td data-title="'UpDown'" sortable="'UpDown'" filter="{ 'UpDown': 'text' }">{{pilgrimRoom.UpDown}}</td>
-                <td data-title="'TeamRoommate'" sortable="'TeamRoommate'" filter="{ 'TeamRoommate': 'text' }">{{pilgrimRoom.TeamRoommate}}</td>
-                <td data-title="'PilgrimRoommate1'" sortable="'PilgrimRoommate1'" filter="{ 'PilgrimRoommate1': 'text' }">{{pilgrimRoom.PilgrimRoommate1}}</td>
-                <td data-title="'PilgrimRoommate2'" sortable="'PilgrimRoommate2'" filter="{ 'PilgrimRoommate2': 'text' }">{{pilgrimRoom.PilgrimRoommate2}}</td>
+                <td data-title="'TeamRoommate'" sortable="'TeamRoommate'" filter="{ 'TeamRoommate': 'text' }"><pilgrim-room-team-member-name memberid="{{pilgrimRoom.TeamRoommate}}"/></td>
+                <td data-title="'PilgrimRoommate1'" sortable="'PilgrimRoommate1'" filter="{ 'PilgrimRoommate1': 'text' }"><pilgrim-room-pilgrim-member-name memberid="{{pilgrimRoom.PilgrimRoommate1}}"/></td>
+                <td data-title="'PilgrimRoommate2'" sortable="'PilgrimRoommate2'" filter="{ 'PilgrimRoommate2': 'text' }"><pilgrim-room-pilgrim-member-name memberid="{{pilgrimRoom.PilgrimRoommate2}}"/></td>
+                <td data-title="'PilgrimRoommate3'" sortable="'PilgrimRoommate3'" filter="{ 'PilgrimRoommate3': 'text' }"><pilgrim-room-pilgrim-member-name memberid="{{pilgrimRoom.PilgrimRoommate3}}"/></td>
                 <td>
                     <div class="table-actions">
                 <td>

@@ -1,8 +1,8 @@
 'use strict';
 
 // Team rooms controller
-angular.module('team-rooms').controller('TeamRoomsController', ['$scope', '$stateParams', '$location', 'Authentication', 'TeamRooms', 'TableSettings', 'TeamRoomsForm','$resource',
-	function($scope, $stateParams, $location, Authentication, TeamRooms, TableSettings, TeamRoomsForm, $resource ) {
+angular.module('team-rooms').controller('TeamRoomsController', ['$scope', '$stateParams', '$location', 'Authentication', 'TeamRooms', 'TableSettings', 'TeamRoomsForm','$resource','$q',
+	function($scope, $stateParams, $location, Authentication, TeamRooms, TableSettings, TeamRoomsForm, $resource, $q ) {
 		$scope.authentication = Authentication;
 		$scope.tableParams = TableSettings.getParams(TeamRooms);
 		$scope.teamRoom = {};
@@ -12,14 +12,58 @@ angular.module('team-rooms').controller('TeamRoomsController', ['$scope', '$stat
 		};
 
 		$scope.cvsMe = function(tableData) {
+			var deferred = $q.defer();
+			var reJiggered = [];
 			var keysS =[];
 			angular.forEach(tableData[0], function(value, key) {
 				this.push(key);
 			}, keysS);
-			console.log(keysS);
-			tableData.unshift(keysS);
-			return(tableData);
+			keysS = {'Building':'Building','RoomNumber':'RoomNumber','RoomMate1':'RoomMate1','RoomMate2':'RoomMate2'};
+			var returnList = [];
+			var nowWholeList = $resource('/whole-team-lists?count=999&page=1');
+			var answer = nowWholeList.get(function() {
+				for (var i = 0; i < answer.total; i++) {
+					var value = [];
+					if (answer.results[i].Building == 'Retreat Center') {
+						value['name'] = answer.results[i].Name;
+						value['value'] = answer.results[i]._id;
+						returnList.push(value);
+					}
+				}
+				for (var i = 0; i < tableData.length; i++){
+					var reJig = new Object();
+					reJig.Building = tableData[i]['Building'] ;
+					reJig.RoomNumber = tableData[i]['RoomNumber'];
+					reJig.RoomMate1 = getNameFromList(returnList,tableData[i]['Roommate1']);
+					reJig.RoomMate2 = getNameFromList(returnList,tableData[i]['Roommate2']);
+					//var reJig = [];
+					//reJig["Building"]= tableData[i]['Building'] ;
+					//reJig["RoomNumber"]= tableData[i]['RoomNumber'];
+					//reJig["RoomMate1"]=tableData[i]['RoomMate1'];
+					//reJig["RoomMate2"]=tableData[i]['RoomMate2'];
+					//var reJig = " { ";
+					//reJig += ' "Building":"' + tableData[i]['Building'] + '", ';
+					//reJig += ' "RoomNumber":"' + tableData[i]['RoomNumber'] + '", ';
+					//reJig += ' "RoomMate1":"' + tableData[i]['RoomMate1'] + '", ';
+					//reJig += ' "RoomMate2":"' + tableData[i]['RoomMate2'] + '" } ';
+					reJiggered.push(reJig);
+				}
+				reJiggered.unshift(keysS);
+				deferred.resolve(reJiggered);
+			});
+			return deferred.promise;
 		};
+
+		var getNameFromList = function(list, id) {
+			var returnName = 'empty';
+			for (var j = 0; j < list.length; j++) {
+				if ( id == list[j].value) {
+					returnName = list[j].name;
+					break;
+				}
+			}
+			return returnName;
+		}
 
 		$scope.pullDataFromMains =  function(tableData) {
 			var nowWholeList = $resource('/whole-team-lists?count=999&page=1');

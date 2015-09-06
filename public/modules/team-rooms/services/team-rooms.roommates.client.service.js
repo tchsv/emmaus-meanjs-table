@@ -24,7 +24,6 @@ angular.module('team-rooms')
 			return returnList;
 		};
 
-
         return {
             getTeamRetreat: getTeamRetreat
         }

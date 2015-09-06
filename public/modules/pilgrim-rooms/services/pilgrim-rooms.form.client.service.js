@@ -3,7 +3,7 @@
 
     angular
         .module('pilgrim-rooms')
-        .factory('PilgrimRoomsForm', ['ConfRoomTablesMembers', function (ConfRoomTablesMembers) {
+        .factory('PilgrimRoomsForm', ['PilgrimRoomTablesMembers', function (PilgrimRoomTablesMembers) {
 
             var getFormFields = function (disabled) {
 
@@ -42,7 +42,8 @@
                         type: 'select',
                         templateOptions: {
                             label: 'Team Roommate:',
-                            options: ConfRoomTablesMembers.getTeam()
+                            disabled: disabled,
+                            options: PilgrimRoomTablesMembers.getTeam()
                         },
                     },
                     {
@@ -50,7 +51,8 @@
                         type: 'select',
                         templateOptions: {
                             label: 'Pilgrim Roommate 1:',
-                            options: ConfRoomTablesMembers.getPilgrim()
+                            disabled: disabled,
+                            options: PilgrimRoomTablesMembers.getPilgrim()
                         },
                     },
                     {
@@ -58,7 +60,17 @@
                         type: 'select',
                         templateOptions: {
                             label: 'Pilgrim Roommate 2:',
-                            options: ConfRoomTablesMembers.getPilgrim()
+                            disabled: disabled,
+                            options: PilgrimRoomTablesMembers.getPilgrim()
+                        },
+                    },
+                    {
+                        key: 'PilgrimRoommate3',
+                        type: 'select',
+                        templateOptions: {
+                            label: 'Pilgrim Roommate 3:',
+                            disabled: disabled,
+                            options: PilgrimRoomTablesMembers.getPilgrim()
                         },
                     },
                     {

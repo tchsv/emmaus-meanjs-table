@@ -54,15 +54,19 @@ var PilgrimSchema = new Schema({
     },
 
     Room_Mate1: {
-        type: Schema.ObjectId,
-        ref: 'wholeteamlists'
+        type: String,
+        default: '',
     },
 
     Room_Mate2: {
-        type: Schema.ObjectId,
-        ref: 'pilgrim'
+        type: String,
+        default: '',
     },
 
+    Room_Mate3: {
+        type: String,
+        default: '',
+    },
     Paid: {
         type: String,
         default: 'No',

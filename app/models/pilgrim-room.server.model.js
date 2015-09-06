@@ -22,6 +22,10 @@ var PilgrimRoomSchema = new Schema({
 		type:Schema.Types.ObjectId,
 		ref: 'Pilgrim'
 	},
+	PilgrimRoommate3: {
+		type:Schema.Types.ObjectId,
+		ref: 'Pilgrim'
+	},
 	RoomNumber: {
 		type: String,
 		default: '',
