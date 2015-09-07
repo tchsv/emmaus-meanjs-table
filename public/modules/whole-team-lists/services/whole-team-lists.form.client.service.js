@@ -19,6 +19,22 @@
                     }
                 },
                 {
+                    key: 'FirstName',
+                    type: 'input',
+                    templateOptions: {
+                        label: 'First Name:',
+                        disabled: disabled
+                    }
+                },
+                {
+                    key: 'LastName',
+                    type: 'input',
+                    templateOptions: {
+                        label: 'Last Name:',
+                        disabled: disabled
+                    }
+                },
+                {
                     key: 'Committee',
                     type: 'input',
                     templateOptions: {
@@ -126,6 +142,30 @@
                     type: 'input',
                     templateOptions: {
                         label: 'City, State, Zip:',
+                        disabled: disabled
+                    }
+                },
+                {
+                    key: 'City',
+                    type: 'input',
+                    templateOptions: {
+                        label: 'City:',
+                        disabled: disabled
+                    }
+                },
+                {
+                    key: 'State',
+                    type: 'input',
+                    templateOptions: {
+                        label: 'State:',
+                        disabled: disabled
+                    }
+                },
+                {
+                    key: 'Zip',
+                    type: 'input',
+                    templateOptions: {
+                        label: 'Zip:',
                         disabled: disabled
                     }
                 },

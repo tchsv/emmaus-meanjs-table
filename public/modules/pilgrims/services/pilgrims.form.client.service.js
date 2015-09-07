@@ -48,6 +48,30 @@
                     }
                 },
                 {
+                    key: 'City',
+                    type: 'input',
+                    templateOptions: {
+                        label: 'City:',
+                        disabled: disabled
+                    }
+                },
+                {
+                    key: 'State',
+                    type: 'input',
+                    templateOptions: {
+                        label: 'State:',
+                        disabled: disabled
+                    }
+                },
+                {
+                    key: 'Zip',
+                    type: 'input',
+                    templateOptions: {
+                        label: 'Zip:',
+                        disabled: disabled
+                    }
+                },
+                {
                     key: 'Phone',
                     type: 'input',
                     templateOptions: {

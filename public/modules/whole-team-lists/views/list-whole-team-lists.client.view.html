@@ -13,6 +13,8 @@
         <table ng-table="tableParams" class="table table-striped table-bordered table-condensed ng-table-responsive" show-filter="true">
             <tr ng-repeat="wholeTeamList in $data">
                 <td data-title="'Name'" sortable="'Name'" filter="{ 'Name': 'text' }">{{wholeTeamList.Name}}</td>
+                <td data-title="'FirstName'" sortable="'FirstName'" filter="{ 'FirstName': 'text' }">{{wholeTeamList.FirstName}}</td>
+                <td data-title="'LastName'" sortable="'LastName'" filter="{ 'LastName': 'text' }">{{wholeTeamList.LastName}}</td>
                 <td data-title="'Committee'" sortable="'Committee'" filter="{ 'Committee': 'text' }">{{wholeTeamList.Committee}}</td>
                 <td data-title="'Chairperson'" sortable="'Chairperson'" filter="{ 'Chairperson': 'text' }">{{wholeTeamList.Chairperson}}</td>
                 <td data-title="'Talk'" sortable="'Talk'" filter="{ 'Talk': 'text' }">{{wholeTeamList.Talk}}</td>
@@ -21,6 +23,9 @@
                 <td data-title="'Email'" sortable="'Email'" filter="{ 'Email': 'text' }">{{wholeTeamList.Email}}</td>
                 <td data-title="'Street Address'" >{{wholeTeamList.Street_Address}}</td>
                 <td data-title="'City,State,Zip'"  >{{wholeTeamList.City_State_Zip}}</td>
+                <td data-title="'City'" sortable="'City'" filter="{ 'City': 'text' }">{{wholeTeamList.City}}</td>
+                <td data-title="'State'" sortable="'State'" filter="{ 'State': 'text' }">{{wholeTeamList.State}}</td>
+                <td data-title="'Zip'" sortable="'Zip'" filter="{ 'Zip': 'text' }">{{wholeTeamList.Zip}}</td>
                 <td data-title="'Paid'" sortable="'Paid'" filter="{ 'Paid': 'text' }">{{wholeTeamList.Paid}}</td>
                 <td data-title="'PaidAmount'" sortable="'PaidAmount'" filter="{ 'PaidAmount': 'text' }">{{wholeTeamList.PaidAmount}}</td>
                 <td data-title="'Roommate'" sortable="'Roommate'" filter="{ 'Roommate': 'text' }">{{wholeTeamList.Roommate}}</td>

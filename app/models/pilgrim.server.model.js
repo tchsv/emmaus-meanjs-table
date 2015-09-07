@@ -36,6 +36,24 @@ var PilgrimSchema = new Schema({
         required: 'Please fill Pilgrim city state zip',
     },
 
+    City: {
+        type: String,
+        default: '',
+        required: 'Please fill Pilgrim city state zip',
+    },
+
+    State: {
+        type: String,
+        default: '',
+        required: 'Please fill Pilgrim city state zip',
+    },
+
+    Zip: {
+        type: String,
+        default: '',
+        required: 'Please fill Pilgrim city state zip',
+    },
+
     Phone: {
         type: String,
         default: '',

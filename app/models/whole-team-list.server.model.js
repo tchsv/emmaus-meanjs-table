@@ -16,6 +16,16 @@ var WholeTeamListSchema = new Schema({
 		required: 'Name required',
 		trim: true
 	},
+	FirstName: {
+		type: String,
+		default: '',
+		trim: true
+	},
+	LastName: {
+		type: String,
+		default: '',
+		trim: true
+	},
 	Committee: {
 		type: String,
 		default: '',
@@ -53,6 +63,21 @@ var WholeTeamListSchema = new Schema({
 		trim: true
 	},
 	City_State_Zip: {
+		type: String,
+		default: '',
+		trim: true
+	},
+	City: {
+		type: String,
+		default: '',
+		trim: true
+	},
+	State: {
+		type: String,
+		default: '',
+		trim: true
+	},
+	Zip: {
 		type: String,
 		default: '',
 		trim: true
