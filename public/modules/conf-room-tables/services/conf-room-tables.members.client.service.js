@@ -47,7 +47,7 @@ angular.module('conf-room-tables')
                 var nowWholeList = $resource('/pilgrims?count=999&page=1');
                 var noneValue = [];
                 noneValue['name'] = 'Empty';
-                noneValue['value'] = 'Empty';
+                noneValue['value'] = null;
                 returnList.push(noneValue);
                 var answer = nowWholeList.get(function () {
                     console.log(answer);

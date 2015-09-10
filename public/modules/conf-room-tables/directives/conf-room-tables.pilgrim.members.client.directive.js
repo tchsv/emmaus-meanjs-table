@@ -19,7 +19,7 @@ angular.module('conf-room-tables')
                 var nowWholeList = $resource('/pilgrims/' + attrs.memberid);
                 var answer = nowWholeList.get(function () {
                     console.log(answer);
-                    scope.localPilgrim = answer.FirstName + ' ' + answer.LastName;
+                    scope.localPilgrim = answer.FirstName + ' ' + answer.LastName + ' (' + answer.RoomNumber + ')';
                 });
             }
 		};

@@ -12,13 +12,16 @@ angular.module('conf-room-tables')
             var nowWholeList = $resource('/whole-team-lists/' + attrs.memberid);
                 var answer = nowWholeList.get(function() {
                     console.log(answer);
-                            scope.localTeamMember = answer.Name;
+                            scope.localTeamMember = answer.Name + ' (' + answer.RoomNumber + ')';
             });
 		};
 
 
         return {
             link: link,
+            scope: {
+
+            },
             restrict: 'E',
             template: '{{localTeamMember}}',
         }
