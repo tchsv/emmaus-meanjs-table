@@ -13,6 +13,10 @@ angular.module('whole-team-lists').config(['$stateProvider',
                 url: '/paid-team-lists',
                 templateUrl: 'modules/whole-team-lists/views/list-paid-team-lists.client.view.html'
             }).
+            state('listTeamList2009Lists', {
+                url: '/team-rev2009-lists',
+                templateUrl: 'modules/whole-team-lists/views/list-teamwalkrev2009-lists.client.view.html'
+            }).
             state('listPaidTeamSummaryLists', {
                 url: '/paid-team-summary-lists',
                 templateUrl: 'modules/whole-team-lists/views/list-paid-team-summary-lists.client.view.html'

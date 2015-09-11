@@ -10,5 +10,6 @@ angular.module('whole-team-lists').run(['Menus',
 		//Menus.addSubMenuItem('topbar', 'whole-team-lists', 'New Whole team list', 'whole-team-lists/create');
 		Menus.addMenuItem('topbar', 'Pd.', 'paid-team-lists', 'button', '/paid-team-lists');
 		Menus.addMenuItem('topbar', 'Summary RC', 'paid-team-summary-lists', 'button', '/paid-team-summary-lists');
+		Menus.addMenuItem('topbar', 'Team2009', 'team-rev2009-lists', 'button', '/team-rev2009-lists');
 	}
 ]);

@@ -52,6 +52,11 @@ var WholeTeamListSchema = new Schema({
 		default: '',
 		trim: true
 	},
+	AreaCode: {
+		type: String,
+		default: '',
+		trim: true
+	},
 	Email: {
 		type: String,
 		default: '',
@@ -78,6 +83,11 @@ var WholeTeamListSchema = new Schema({
 		trim: true
 	},
 	Zip: {
+		type: String,
+		default: '',
+		trim: true
+	},
+	OrignalWalkNumber: {
 		type: String,
 		default: '',
 		trim: true

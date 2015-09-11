@@ -114,6 +114,14 @@
                     }
                 },
                 {
+                    key: 'AreaCode',
+                    type: 'input',
+                    templateOptions: {
+                        label: 'AC:',
+                        disabled: disabled
+                    }
+                },
+                {
                     key: 'Phone',
                     type: 'input',
                     templateOptions: {
@@ -166,6 +174,14 @@
                     type: 'input',
                     templateOptions: {
                         label: 'Zip:',
+                        disabled: disabled
+                    }
+                },
+                {
+                    key: 'OrignalWalkNumber',
+                    type: 'input',
+                    templateOptions: {
+                        label: 'OrignalWalkNumber:',
                         disabled: disabled
                     }
                 },
