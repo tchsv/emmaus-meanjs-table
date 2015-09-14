@@ -3,21 +3,76 @@
 
         <h2>Random activities with really hugh buttons.....</h2>
 
-        <h3>
-            Select a file: <br/>  <input type="file"  name="fileToProcess"/>
-        </h3>
+        <div class="border bg-info">
+            <h3>Select a file:
+            </h3>
+
+            <input type="file" name="fileToProcess"/>
         <h3>
             <a type="button" class="btn btn-info " title='Pull' ng-click="refreshPilgrimDataFromExcel()">
             <span class="glyphicon glyphicon-tasks">
-                Refresh Pilgrim Data From Excel
             </span>
+                Refresh Pilgrim Data From Excel
             </a>
             <a type="button" class="btn btn-info " title='Pull' ng-click="refreshTeamDataFromExcel()">
             <span class="glyphicon glyphicon-tasks">
-                Refresh Team Data From Excel
             </span>
+                Refresh Team Data From Excel
             </a>
         </h3>
+    </div>
+
+
+
+        <div class="conf-room">
+            <h3>
+                Conference Room and Pilgrim/Team Rooms
+            </h3>
+            <h2>
+                <a type="button" class="btn btn-info " title='Pull' ng-href="#!/conf-room-tables">
+            <span class="glyphicon glyphicon-tasks">
+            </span>
+                    Conference Room Tables
+                </a>
+
+            </h2>
+            <h2>
+                <a type="button" class="btn btn-info " title='Pull' ng-href="#!/pilgrim-rooms">
+            <span class="glyphicon glyphicon-tasks">
+            </span>
+                    Pilgrim/Team Room
+                </a>
+
+            </h2>
+        </div>
+        <div>
+            <h3>
+                Pilgrim
+            </h3>
+            <h2>
+                <a type="button" class="btn btn-info " title='Pull' ng-href="#!/pilgrims">
+            <span class="glyphicon glyphicon-tasks">
+            </span>
+                    Pilgrim
+                </a>
+
+            </h2>
+        </div>
+
+        <br/>
+        <br/>
+
+        <h2>
+            <ul>
+                <li>TODO:</li>
+                <li>Create table/entries/list for non-team members.</li>
+                <li>Allow for non team housing.</li>
+                <li>Keep track of nights stayed.</li>
+                <li>Keep list of changes table(audit,undo,..)</li>
+            </ul>
+        </h2>
+        <br/>
+        <br/>
 
         <p>To create new entities in your project you have to:</p>
 

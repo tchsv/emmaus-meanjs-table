@@ -60,6 +60,68 @@ angular.module('conf-room-tables').controller('ConfRoomTablesController', ['$sco
             return deferred.promise;
 
         };
+        $scope.cvsLastDayList = function (tableData) {
+            var deferred = $q.defer();
+            var reJiggered = [];
+            var keysS = [];
+            keysS = {
+                'Table': 'Table',
+                'Name': 'Name',
+                'Street_Address': 'Street',
+                'City': 'City',
+                'State': 'State',
+                'Zip': 'Zip',
+                'AreaCode': 'AC',
+                'Phone': 'Phone',
+            };
+
+
+            ConfRoomTablesMembers.getTableLeadersWp().then(function (tableLeaderList) {
+                ConfRoomTablesMembers.getAssistantTableLeadersWp().then(function (assistantTableLeaderList) {
+                    ConfRoomTablesMembers.getPilgrimsWp().then(function (pilgrimList) {
+                        for (var i = 0; i < tableData.length; i++) {
+                            var reJig = new Object();
+                            reJig = getNameFromListPlus(tableLeaderList, tableData[i]['tableLeader']);
+                            reJiggered.push(reJig);
+                            var reJig = new Object();
+                            reJig = getNameFromListPlus(assistantTableLeaderList, tableData[i]['assistantTableLeader']);
+                            reJiggered.push(reJig);
+                            var reJig = new Object();
+                            reJig = getNameFromListPlus(pilgrimList, tableData[i]['pilgrim1']);
+                            reJiggered.push(reJig);
+                            var reJig = new Object();
+                            reJig = getNameFromListPlus(pilgrimList, tableData[i]['pilgrim2']);
+                            reJiggered.push(reJig);
+                            var reJig = new Object();
+                            reJig = getNameFromListPlus(pilgrimList, tableData[i]['pilgrim3']);
+                            reJiggered.push(reJig);
+                            var reJig = new Object();
+                            reJig = getNameFromListPlus(pilgrimList, tableData[i]['pilgrim4']);
+                            reJiggered.push(reJig);
+                            var reJig = new Object();
+                            reJig = getNameFromListPlus(pilgrimList, tableData[i]['pilgrim5']);
+                            reJiggered.push(reJig);
+                            var reJig = new Object();
+                            reJig = getNameFromListPlus(pilgrimList, tableData[i]['pilgrim6']);
+                            reJiggered.push(reJig);
+                            var reJig = new Object();
+                            reJiggered.push(reJig);
+                            reJig = getNameFromListPlus(pilgrimList, tableData[i]['pilgrim7']);
+                            reJiggered.push(reJig);
+                            var reJig = new Object();
+                            reJig = getNameFromListPlus(pilgrimList, tableData[i]['pilgrim8']);
+                            reJiggered.push(reJig);
+                        }
+                        reJiggered.unshift(keysS);
+                        deferred.resolve(reJiggered);
+
+                    });
+                });
+            });
+
+            return deferred.promise;
+
+        };
 
         var getNameFromList = function (list, id) {
             var returnName = 'empty';
@@ -72,6 +134,25 @@ angular.module('conf-room-tables').controller('ConfRoomTablesController', ['$sco
             return returnName;
         }
 
+        var getNameFromListPlus = function (list, id) {
+            var returnName = Object();
+            for (var j = 0; j < list.length; j++) {
+                if (id == list[j].value) {
+                    //returnName = list[j].name;
+                    returnName.Table = list[j]['Table'];
+                    returnName.Name = list[j]['name'];
+                    returnName.Street_Address = list[j]['Street_Address'];
+                    returnName.City = list[j]['City'];
+                    returnName.State = list[j]['State'];
+                    returnName.Zip = list[j]['Zip'];
+                    returnName.AreaCode = list[j]['AreaCode'];
+                    returnName.Phone = list[j]['Phone'];
+
+                    break;
+                }
+            }
+            return returnName;
+        }
 
         function pushTableToPilgrimsTable(id, Table) {
             if (id == 'Empty') {

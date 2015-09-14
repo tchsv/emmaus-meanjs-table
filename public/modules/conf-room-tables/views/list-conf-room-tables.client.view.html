@@ -44,6 +44,8 @@
                     <span class="glyphicon glyphicon-export"></span>Export To CSV</a>
                 <a type="button" class="btn btn-danger " title='Export' ng-click="pushDataToMainTables(tableParams.data)"  >
                     <span class="glyphicon glyphicon-bullhorn"></span>Push To Main Tables</a>
+                <a type="button" class="btn btn-success " title='Export' ng-csv="cvsLastDayList(tableParams.data)"  filename="confRoomLastDay.csv">
+                    <span class="glyphicon glyphicon-export"></span>Export To CSV For Last Day List</a>
             </tr>
         </table>
     </div>

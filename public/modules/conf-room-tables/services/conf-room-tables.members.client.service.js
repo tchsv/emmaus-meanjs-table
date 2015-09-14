@@ -73,6 +73,14 @@ angular.module('conf-room-tables')
                         var value = [];
                         if (answer.results[i].Committee == 'Table Leaders') {
                             value['name'] = answer.results[i].Name;
+                            value['AreaCode'] = answer.results[i].AreaCode;
+                            value['Street_Address'] = answer.results[i].Street_Address;
+                            value['City'] = answer.results[i].City;
+                            value['State'] = answer.results[i].State;
+                            value['Zip'] = answer.results[i].Zip;
+                            value['Phone'] = answer.results[i].Phone;
+                            value['Table'] = answer.results[i].Table;
+                            value['value'] = answer.results[i]._id;
                             value['value'] = answer.results[i]._id;
                             returnList.push(value);
                         }
@@ -94,6 +102,13 @@ angular.module('conf-room-tables')
                         var value = [];
                         if (answer.results[i].Committee == 'Asst. Table Ldrs.') {
                             value['name'] = answer.results[i].Name;
+                            value['AreaCode'] = answer.results[i].AreaCode;
+                            value['Street_Address'] = answer.results[i].Street_Address;
+                            value['City'] = answer.results[i].City;
+                            value['State'] = answer.results[i].State;
+                            value['Zip'] = answer.results[i].Zip;
+                            value['Phone'] = answer.results[i].Phone;
+                            value['Table'] = answer.results[i].Table;
                             value['value'] = answer.results[i]._id;
                             returnList.push(value);
                         }
@@ -119,6 +134,14 @@ angular.module('conf-room-tables')
                     for (var i = 0; i < answer.total; i++) {
                         var value = [];
                         value['name'] = answer.results[i].FirstName + ' ' + answer.results[i].LastName;
+                        value['AreaCode'] = answer.results[i].AreaCode;
+                        value['Street_Address'] = answer.results[i].Street_Address;
+                        value['City'] = answer.results[i].City;
+                        value['State'] = answer.results[i].State;
+                        value['Zip'] = answer.results[i].Zip;
+                        value['Phone'] = answer.results[i].Phone;
+                        value['Table'] = answer.results[i].Table;
+
                         value['value'] = answer.results[i]._id;
                         returnList.push(value);
                     }

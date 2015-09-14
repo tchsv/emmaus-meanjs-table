@@ -83,6 +83,7 @@ angular.module('whole-team-lists').controller('WholeTeamListsController', ['$sco
             }
             return sumValue;
         };
+
         $scope.cvsMe = function(tableData) {
             var keysS =[];
             angular.forEach(tableData[0], function(value, key) {
@@ -92,6 +93,52 @@ angular.module('whole-team-lists').controller('WholeTeamListsController', ['$sco
             tableData.unshift(keysS);
             return(tableData);
         };
+
+
+        $scope.cvsMe2009 = function(tableData) {
+            var returnData = [];
+            var keysS = Object();
+            keysS.LastName='LastName';
+            keysS.FirstName='FirstName';
+            keysS.AreaCode='AC';
+            keysS.Phone='Phone';
+            keysS.Street_Address='Street_Address';
+            keysS.City='City';
+            keysS.State='State';
+            keysS.Zip='Zip';
+            keysS.OrignalWalkNumber='Orignal Walk Number';
+            keysS.ComboArea = 'Talk Given Or Area of Service On Walk';
+                //,{'Committee': 'Committee'}
+                //,{'Chairperson': 'Chairperson'}
+                //,{'Talk': 'Talk'}
+
+
+            for(var i = 0; i < tableData.length; i++) {
+                var jig = Object();
+                jig.LastName = tableData[i].LastName;
+                jig.FirstName = tableData[i].FirstName;
+                jig.AreaCode = tableData[i].AreaCode;
+                jig.Phone = tableData[i].Phone;
+                jig.Street_Address = tableData[i].Street_Address;
+                jig.City = tableData[i].City;
+                jig.State = tableData[i].State;
+                jig.Zip = tableData[i].Zip;
+                jig.OrignalWalkNumber = tableData[i].OrignalWalkNumber;
+                jig.ComboArea = '';
+                if ( tableData[i].Chairperson == 'Yes'){
+                    jig.ComboArea += 'Chair';
+                }
+                jig.ComboArea += ' ' + tableData[i].Committee;
+                jig.ComboArea += '; ' + tableData[i].Talk;
+                returnData.push(jig);
+            }
+
+            returnData.unshift(keysS);
+            return(returnData);
+        };
+
+
+
         $scope.totalUnPaid= function(stuff) {
             var sumValue =0;
             if (stuff.length == 0 ){

@@ -10,6 +10,10 @@ angular.module('team-rooms')
             var returnList = [];
             var nowWholeList = $resource('/whole-team-lists?count=999&page=1');
                 var answer = nowWholeList.get(function() {
+                    var noneValue = [];
+                    noneValue['name'] = 'Empty';
+                    noneValue['value'] = null;
+                    returnList.push(noneValue);
                     console.log(answer);
                     for (var i = 0; i < answer.total; i++) {
                         var value = [];
