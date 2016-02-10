@@ -8,4 +8,4 @@ app/tests/coverage/
 .bower-*/
 .idea/
 walk_data/
-walk_data.zip
+walk_data*.zip
