@@ -1,7 +1,7 @@
 'use strict';
 
 
-angular.module('core').controller('HomeController', ['$scope', 'Authentication','$window', '$resource',
+angular.module('core').controller('HomeController', ['$scope', 'Authentication', '$window', '$resource',
     function ($scope, Authentication, $window, $resource) {
         // This provides Authentication context.
         $scope.authentication = Authentication;
@@ -10,8 +10,8 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
         $scope.refreshPilgrimDataFromExcel = function () {
             var reader = new FileReader();
             var file = document.querySelector('input[type=file]').files[0];
-            if ( file.name) {
-            var name = file.name;
+            if (file.name) {
+                var name = file.name;
             } else {
                 return;
             }
@@ -32,47 +32,84 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
                 var oddStuff = $window.XLSX.utils.sheet_to_json(worksheet);
 
                 var nowWholeList = $resource('/pilgrims?count=999&page=1');
-                var answer = nowWholeList.get(function() {
+                var answer = nowWholeList.get(function () {
                     console.log(answer);
-                    for (var i = 0; i < answer.total; i++) {
+                    if (answer.total === 0) {
+                        for (var j = 0; j < oddStuff.length; j++) {
+                            currentRow = {};
+                            var newRow = oddStuff[j];
+                            var update = false;
+                            var keys = Object.keys(newRow);
+                            for (var k = 0; k < keys.length; k++) {
+                                var nR = newRow[keys[k]];
+                                nR = nR.trim();
+                                currentRow[keys[k]] = nR;
+                                update = true;
+                            }
+                            if (update) {
+                                console.log("updated row:" + JSON.stringify(currentRow));
+                                if (!currentRow.Room_Mate1) {
+                                    currentRow.Room_Mate1 = null;
+                                }
+                                if (!currentRow.Room_Mate2) {
+                                    currentRow.Room_Mate2 = null;
+                                }
+                                if (!currentRow.Room_Mate3) {
+                                    currentRow.Room_Mate3 = null;
+                                }
+                                var holeList = $resource('/pilgrims/' , null,
+                                    {
+                                        'set': {method: 'POST'}
+                                    });
+                                holeList.set(currentRow);
 
-                        /**
-                         * Now check for each row....  search the worksheet the the First and Last name....
-                         * @type {Array}
-                         */
-                        var currentRow = answer.results[i];
+                            }
+                        }
+
+                    }
+                    else {
+
+
+
+                        for (var i = 0; i < answer.total; i++) {
+
+                            /**
+                             * Now check for each row....  search the worksheet the the First and Last name....
+                             * @type {Array}
+                             */
+                            var currentRow = answer.results[i];
                             for (var j = 0; j < oddStuff.length; j++) {
                                 if (currentRow.LastName.trim() == oddStuff[j].LastName.trim()) {
                                     if (currentRow.FirstName.trim() == oddStuff[j].FirstName.trim()) {
                                         var newRow = oddStuff[j];
                                         var update = false;
                                         var keys = Object.keys(newRow);
-                                        for ( var k = 0 ; k < keys.length; k++) {
+                                        for (var k = 0; k < keys.length; k++) {
                                             var nR = newRow[keys[k]];
                                             nR = nR.trim();
                                             var cR = currentRow[keys[k]];
                                             if (cR) {
                                                 cR = cR.trim();
                                             }
-                                            if ( nR != cR ) {
+                                            if (nR != cR) {
                                                 currentRow[keys[k]] = nR;
                                                 update = true;
                                             }
                                         }
-                                        if ( update ) {
+                                        if (update) {
                                             console.log("updated row:" + JSON.stringify(currentRow));
-                                            if(!currentRow.Room_Mate1) {
+                                            if (!currentRow.Room_Mate1) {
                                                 currentRow.Room_Mate1 = null;
                                             }
-                                            if(!currentRow.Room_Mate2) {
+                                            if (!currentRow.Room_Mate2) {
                                                 currentRow.Room_Mate2 = null;
                                             }
-                                            if(!currentRow.Room_Mate3) {
+                                            if (!currentRow.Room_Mate3) {
                                                 currentRow.Room_Mate3 = null;
                                             }
                                             var holeList = $resource('/pilgrims/' + currentRow._id, null,
                                                 {
-                                                    'update': { method:'PUT' }
+                                                    'update': {method: 'PUT'}
                                                 });
                                             holeList.update(currentRow);
 
@@ -80,12 +117,9 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
                                     }
                                 }
                             }
+                        }
                     }
                 });
-
-
-
-
 
 
             };
@@ -97,7 +131,7 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
         $scope.refreshTeamDataFromExcel = function () {
             var reader = new FileReader();
             var file = document.querySelector('input[type=file]').files[0];
-            if ( file.name) {
+            if (file.name) {
                 var name = file.name;
             } else {
                 return;
@@ -119,58 +153,90 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
                 var oddStuff = $window.XLSX.utils.sheet_to_json(worksheet);
 
                 var nowWholeList = $resource('/whole-team-lists?count=999&page=1');
-                var answer = nowWholeList.get(function() {
+                var answer = nowWholeList.get(function () {
                     console.log(answer);
-                    for (var i = 0; i < answer.total; i++) {
-
-                        /**
-                         * Now check for each row....  search the worksheet the the First and Last name....
-                         * @type {Array}
-                         */
-                        var currentRow = answer.results[i];
+                    if (answer.total === 0) {
                         for (var j = 0; j < oddStuff.length; j++) {
-                            if (currentRow.Name.trim() == oddStuff[j].Name.trim()) {
+                            currentRow = {};
+                                var newRow = oddStuff[j];
+                                var update = false;
+                                var keys = Object.keys(newRow);
+                                for (var k = 0; k < keys.length; k++) {
+                                    // TODO: Create Name here if needed
+                                    var nR = newRow[keys[k]];
+                                    nR = nR.trim();
+                                        currentRow[keys[k]] = nR;
+                                        update = true;
+                                }
+                                if (update) {
+                                    currentRow.Name = currentRow.FirstName + " " + currentRow.LastName;
+                                    console.log("updated row:" + JSON.stringify(currentRow));
+                                    if (!currentRow.Room_Mate1) {
+                                        currentRow.Room_Mate1 = null;
+                                    }
+                                    if (!currentRow.Room_Mate2) {
+                                        currentRow.Room_Mate2 = null;
+                                    }
+                                    if (!currentRow.Room_Mate3) {
+                                        currentRow.Room_Mate3 = null;
+                                    }
+                                    var holeList = $resource('/whole-team-lists/',null );
+                                    holeList.save({},currentRow);
+
+                                }
+                            }
+
+                    }
+                    else {
+                        for (var i = 0; i < answer.total; i++) {
+
+                            /**
+                             * Now check for each row....  search the worksheet the the First and Last name....
+                             * @type {Array}
+                             */
+                            var currentRow = answer.results[i];
+                            for (var j = 0; j < oddStuff.length; j++) {
+                                if (currentRow.Name.trim() == oddStuff[j].Name.trim()) {
                                     var newRow = oddStuff[j];
                                     var update = false;
                                     var keys = Object.keys(newRow);
-                                    for ( var k = 0 ; k < keys.length; k++) {
+                                    for (var k = 0; k < keys.length; k++) {
                                         var nR = newRow[keys[k]];
                                         nR = nR.trim();
                                         var cR = currentRow[keys[k]];
                                         if (cR) {
-                                            cR = cR.trim();
+                                            if (typeof cR === 'string' ) {
+                                                cR = cR.trim();
+                                            }
                                         }
-                                        if ( nR != cR ) {
+                                        if (nR != cR) {
                                             currentRow[keys[k]] = nR;
                                             update = true;
                                         }
                                     }
-                                    if ( update ) {
+                                    if (update) {
                                         console.log("updated row:" + JSON.stringify(currentRow));
-                                        if(!currentRow.Room_Mate1) {
+                                        if (!currentRow.Room_Mate1) {
                                             currentRow.Room_Mate1 = null;
                                         }
-                                        if(!currentRow.Room_Mate2) {
+                                        if (!currentRow.Room_Mate2) {
                                             currentRow.Room_Mate2 = null;
                                         }
-                                        if(!currentRow.Room_Mate3) {
+                                        if (!currentRow.Room_Mate3) {
                                             currentRow.Room_Mate3 = null;
                                         }
                                         var holeList = $resource('/whole-team-lists/' + currentRow._id, null,
                                             {
-                                                'update': { method:'PUT' }
+                                                'update': {method: 'PUT'}
                                             });
                                         holeList.update(currentRow);
 
                                     }
+                                }
                             }
                         }
                     }
                 });
-
-
-
-
 
 
             };

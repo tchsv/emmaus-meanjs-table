@@ -7,6 +7,7 @@
                 <li>Keep track of nights stayed.</li>
                 <li>Keep list of changes table(audit,undo,..)</li>
                 <li>Figure out how to print labels...</li>
+                <li>Look at committee names for sameness...</li>
             </ul>
 
 
