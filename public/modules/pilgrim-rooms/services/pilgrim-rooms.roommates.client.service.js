@@ -13,7 +13,7 @@ angular.module('pilgrim-rooms')
                     console.log(answer);
                     for (var i = 0; i < answer.total; i++) {
                         var value = [];
-                        if ( (answer.results[i].Committee == 'Table Leaders' ) || (answer.results[i].Committee == 'Asst. Table Ldrs.') ) {
+                        if ( (answer.results[i].Committee == 'Table Leader' ) || (answer.results[i].Committee == 'Asst. Table Leader') ) {
                             value['name'] = answer.results[i].Name;
                             value['value'] = answer.results[i]._id;
                             returnList.push(value);
@@ -32,7 +32,7 @@ angular.module('pilgrim-rooms')
                 console.log(answer);
                 for (var i = 0; i < answer.total; i++) {
                     var value = [];
-                    if ( (answer.results[i].Committee == 'Table Leaders' ) || (answer.results[i].Committee == 'Asst. Table Ldrs.') ) {
+                    if ( (answer.results[i].Committee == 'Table Leader' ) || (answer.results[i].Committee == 'Asst. Table Leader') ) {
                         value['name'] = answer.results[i].Name;
                         value['value'] = answer.results[i]._id;
                         returnList.push(value);

@@ -14,7 +14,8 @@ angular.module('conf-room-tables')
                     console.log(answer);
                     for (var i = 0; i < answer.total; i++) {
                         var value = [];
-                        if (answer.results[i].Committee == 'Table Leaders') {
+                        var currentMember = answer.results[i];
+                        if (answer.results[i].Committee == 'Table Leader') {
                             value['name'] = answer.results[i].Name;
                             value['value'] = answer.results[i]._id;
                             returnList.push(value);
@@ -31,7 +32,7 @@ angular.module('conf-room-tables')
                     console.log(answer);
                     for (var i = 0; i < answer.total; i++) {
                         var value = [];
-                        if (answer.results[i].Committee == 'Asst. Table Ldrs.') {
+                        if (answer.results[i].Committee == 'Asst. Table Leader') {
                             value['name'] = answer.results[i].Name;
                             value['value'] = answer.results[i]._id;
                             returnList.push(value);
@@ -71,7 +72,7 @@ angular.module('conf-room-tables')
                     console.log('getTableLeadersWp'+answer);
                     for (var i = 0; i < answer.total; i++) {
                         var value = [];
-                        if (answer.results[i].Committee == 'Table Leaders') {
+                        if (answer.results[i].Committee == 'Table Leader') {
                             value['name'] = answer.results[i].Name;
                             value['AreaCode'] = answer.results[i].AreaCode;
                             value['Street_Address'] = answer.results[i].Street_Address;
@@ -100,7 +101,7 @@ angular.module('conf-room-tables')
                     console.log('getAssistantTableLeadersWp'+answer);
                     for (var i = 0; i < answer.total; i++) {
                         var value = [];
-                        if (answer.results[i].Committee == 'Asst. Table Ldrs.') {
+                        if (answer.results[i].Committee == 'Asst. Table Leader') {
                             value['name'] = answer.results[i].Name;
                             value['AreaCode'] = answer.results[i].AreaCode;
                             value['Street_Address'] = answer.results[i].Street_Address;
