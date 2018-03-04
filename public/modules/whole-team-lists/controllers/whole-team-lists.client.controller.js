@@ -1,7 +1,12 @@
 'use strict';
 
 // Whole team lists controller
-angular.module('whole-team-lists').controller('WholeTeamListsController', ['$scope', '$stateParams', '$location', 'Authentication', 'WholeTeamLists', 'TableSettings', 'WholeTeamListsForm',
+angular.module('whole-team-lists')
+    .controller('WholeTeamListsController',
+        ['$scope', '$stateParams'
+            , '$location', 'Authentication'
+            , 'WholeTeamLists', 'TableSettings'
+            , 'WholeTeamListsForm',
     function ($scope, $stateParams, $location, Authentication, WholeTeamLists, TableSettings, WholeTeamListsForm) {
         $scope.authentication = Authentication;
         $scope.tableParams = TableSettings.getParams(WholeTeamLists);

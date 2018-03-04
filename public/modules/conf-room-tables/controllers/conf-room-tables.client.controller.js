@@ -1,9 +1,11 @@
 'use strict';
 
 // Conf room tables controller
-angular.module('conf-room-tables').controller('ConfRoomTablesController', ['$scope', '$stateParams', '$location', 'Authentication'
-    , 'ConfRoomTables', 'TableSettings', 'ConfRoomTablesForm', '$q', 'ConfRoomTablesMembers', '$resource',
-    function ($scope, $stateParams, $location, Authentication, ConfRoomTables, TableSettings, ConfRoomTablesForm, $q, ConfRoomTablesMembers, $resource) {
+/* @ngInject */
+angular.module('conf-room-tables').controller('ConfRoomTablesController',
+    function ($scope, $stateParams, $location,
+              Authentication, ConfRoomTables, TableSettings,
+              ConfRoomTablesForm, $q, ConfRoomTablesMembers, $resource) {
         $scope.authentication = Authentication;
         $scope.tableParams = TableSettings.getParams(ConfRoomTables);
         $scope.confRoomTable = {};
@@ -253,4 +255,4 @@ angular.module('conf-room-tables').controller('ConfRoomTablesController', ['$sco
 
     }
 
-]);
+);

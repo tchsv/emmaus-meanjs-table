@@ -1,7 +1,8 @@
 'use strict';
 
 module.exports = {
-	db: 'mongodb://localhost/emmaus',
+	// db: 'mongodb://localhost/emmaus',
+	db: 'mongodb://localhost/emmaus475',
 	app: {
 		title: 'EmmausWalkHousingAndRegistration - Development Environment'
 	},

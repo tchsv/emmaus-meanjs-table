@@ -1,6 +1,6 @@
 'use strict';
-
-angular.module('core').controller('HeaderController', ['$scope', 'Authentication', 'Menus',
+/* @ngInject */
+angular.module('core').controller('HeaderController',
 	function($scope, Authentication, Menus) {
 		$scope.authentication = Authentication;
 		$scope.isCollapsed = false;
@@ -15,4 +15,4 @@ angular.module('core').controller('HeaderController', ['$scope', 'Authentication
 			$scope.isCollapsed = false;
 		});
 	}
-]);
+);
