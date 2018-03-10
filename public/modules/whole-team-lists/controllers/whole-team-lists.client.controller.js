@@ -100,6 +100,7 @@ angular.module('whole-team-lists')
         };
 
 
+
         $scope.cvsMe2009 = function(tableData) {
             var returnData = [];
             var keysS = Object();
@@ -135,6 +136,76 @@ angular.module('whole-team-lists')
                 }
                 jig.ComboArea += ' ' + tableData[i].Committee;
                 jig.ComboArea += '; ' + tableData[i].Talk;
+                returnData.push(jig);
+            }
+
+            returnData.unshift(keysS);
+            return(returnData);
+        };
+
+        $scope.cvsTeamPaidMeeting = function(tableData) {
+            var returnData = [];
+            var keysS = Object();
+            keysS.LastName='LastName';
+            keysS.FirstName='FirstName';
+            keysS.Paid='Paid';
+            keysS.PaidAmount='PaidAmount';
+            keysS.CheckNumber='CheckNumber';
+            keysS.Notes='Notes';
+
+            for(var i = 0; i < tableData.length; i++) {
+                var jig = Object();
+                jig.LastName = tableData[i].LastName;
+                jig.FirstName = tableData[i].FirstName;
+                jig.Paid = tableData[i].Paid;
+                jig.PaidAmount = tableData[i].PaidAmount;
+                jig.CheckNumber = tableData[i].CheckNumber;
+                jig.Notes = tableData[i].Notes;
+                returnData.push(jig);
+            }
+
+            returnData.unshift(keysS);
+            return(returnData);
+        };
+        $scope.cvsTeamMeeting = function(tableData) {
+            var returnData = [];
+            var keysS = Object();
+            keysS.LastName='LastName';
+            keysS.FirstName='FirstName';
+            keysS.Email='Email';
+            keysS.AreaCode='AC';
+            keysS.Phone='Phone';
+            keysS.Street_Address='Street_Address';
+            keysS.City='City';
+            keysS.State='State';
+            keysS.Zip='Zip';
+            keysS.OrignalWalkNumber='Orignal Walk Number';
+            keysS.ComboArea = 'Talk Given Or Area of Service On Walk';
+                //,{'Committee': 'Committee'}
+                //,{'Chairperson': 'Chairperson'}
+                //,{'Talk': 'Talk'}
+
+
+            for(var i = 0; i < tableData.length; i++) {
+                var jig = Object();
+                jig.LastName = tableData[i].LastName;
+                jig.FirstName = tableData[i].FirstName;
+                jig.Email = tableData[i].Email;
+                jig.AreaCode = tableData[i].AreaCode;
+                jig.Phone = tableData[i].Phone;
+                jig.Street_Address = tableData[i].Street_Address;
+                jig.City = tableData[i].City;
+                jig.State = tableData[i].State;
+                jig.Zip = tableData[i].Zip;
+                jig.OrignalWalkNumber = tableData[i].OrignalWalkNumber;
+                jig.ComboArea = '';
+                if ( tableData[i].Chairperson == 'Yes'){
+                    jig.ComboArea += 'Chair';
+                }
+                jig.ComboArea += ' ' + tableData[i].Committee;
+                if (tableData[i].Talk !== 'N/A') {
+                    jig.ComboArea += '; ' + tableData[i].Talk;
+                }
                 returnData.push(jig);
             }
 

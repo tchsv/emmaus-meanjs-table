@@ -102,6 +102,16 @@ var WholeTeamListSchema = new Schema({
 		default: '0',
 		trim: true
 	},
+	CheckNumber: {
+		type: Number,
+		default: '0',
+		trim: true
+	},
+	Notes: {
+		type: String,
+		default: '',
+		trim: true
+	},
 	Roommate: {
 		type: String,
 		default: '',

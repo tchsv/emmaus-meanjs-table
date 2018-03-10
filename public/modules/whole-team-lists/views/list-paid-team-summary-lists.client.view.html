@@ -17,8 +17,10 @@
                 <td data-title="'Paid'" sortable="'Paid'" filter="{ 'Paid': 'text' }">{{wholeTeamList.Paid}}</td>
                 <boolean-yes-no></boolean-yes-no>
                 <td data-title="'PaidAmount'" sortable="'PaidAmount'" filter="{ 'PaidAmount': 'text' }">{{wholeTeamList.PaidAmount}}</td>
+                <td data-title="'CheckNumber'" sortable="'CheckNumber'" filter="{ 'CheckNumber': 'text' }">{{wholeTeamList.CheckNumber}}</td>
                 <td data-title="'Roommate'" sortable="'Roommate'" filter="{ 'Roommate': 'text' }">{{wholeTeamList.Roommate}}</td>
                 <td data-title="'Building'" sortable="'Building'" filter="{ 'Building': 'text' }">{{wholeTeamList.Building}}</td>
+                <td data-title="'Notes'" sortable="'Notes'" filter="{ 'Notes': 'text' }">{{wholeTeamList.Notes}}</td>
                 <td>
                     <div class="table-actions">
                 <td>
@@ -40,7 +42,7 @@
                 <h3>Retreat Center Need Roommate: {{retreatCenterNeedRoomMate(tableParams.data)}}</h3>
                 <h3>Total UnPaid:{{totalUnPaid(tableParams.data)}}</h3>
                 <a type="button" class="btn btn-success " title='Export' ng-csv="cvsMe(tableParams.data)"  filename="paid-summary.csv">
-                    <span class="glyphicon glyphicon-export"></span></a>
+                    <span class="glyphicon glyphicon-export">Team Raw</span></a>
 
             </tr>
 

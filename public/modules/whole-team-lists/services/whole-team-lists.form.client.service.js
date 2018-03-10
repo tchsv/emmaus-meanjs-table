@@ -62,6 +62,22 @@
                     }
                 },
                 {
+                    key: 'CheckNumber',
+                    type: 'input',
+                    templateOptions: {
+                        label: 'Check Number:',
+                        disabled: disabled
+                    }
+                },
+                {
+                    key: 'Notes',
+                    type: 'input',
+                    templateOptions: {
+                        label: 'Notes:',
+                        disabled: disabled
+                    }
+                },
+                {
                     key: 'Roommate',
                     type: 'input',
                     templateOptions: {

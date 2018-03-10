@@ -155,87 +155,7 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
                 var nowWholeList = $resource('/whole-team-lists?count=999&page=1');
                 var answer = nowWholeList.get(function () {
                     console.log(answer);
-                    if (answer.total === 0) {
-                        for (var j = 0; j < oddStuff.length; j++) {
-                            currentRow = {};
-                                var newRow = oddStuff[j];
-                                var update = false;
-                                var keys = Object.keys(newRow);
-                                for (var k = 0; k < keys.length; k++) {
-                                    // TODO: Create Name here if needed
-                                    var nR = newRow[keys[k]];
-                                    nR = nR.trim();
-                                        currentRow[keys[k]] = nR;
-                                        update = true;
-                                }
-                                if (update) {
-                                    currentRow.Name = currentRow.FirstName + " " + currentRow.LastName;
-                                    console.log("updated row:" + JSON.stringify(currentRow));
-                                    if (!currentRow.Room_Mate1) {
-                                        currentRow.Room_Mate1 = null;
-                                    }
-                                    if (!currentRow.Room_Mate2) {
-                                        currentRow.Room_Mate2 = null;
-                                    }
-                                    if (!currentRow.Room_Mate3) {
-                                        currentRow.Room_Mate3 = null;
-                                    }
-                                    var holeList = $resource('/whole-team-lists/',null );
-                                    holeList.save({},currentRow);
-
-                                }
-                            }
-
-                    }
-                    else {
-                        for (var i = 0; i < answer.total; i++) {
-
-                            /**
-                             * Now check for each row....  search the worksheet the the First and Last name....
-                             * @type {Array}
-                             */
-                            var currentRow = answer.results[i];
-                            for (var j = 0; j < oddStuff.length; j++) {
-                                if (currentRow.Name.trim() == oddStuff[j].Name.trim()) {
-                                    var newRow = oddStuff[j];
-                                    var update = false;
-                                    var keys = Object.keys(newRow);
-                                    for (var k = 0; k < keys.length; k++) {
-                                        var nR = newRow[keys[k]];
-                                        nR = nR.trim();
-                                        var cR = currentRow[keys[k]];
-                                        if (cR) {
-                                            if (typeof cR === 'string' ) {
-                                                cR = cR.trim();
-                                            }
-                                        }
-                                        if (nR != cR) {
-                                            currentRow[keys[k]] = nR;
-                                            update = true;
-                                        }
-                                    }
-                                    if (update) {
-                                        console.log("updated row:" + JSON.stringify(currentRow));
-                                        if (!currentRow.Room_Mate1) {
-                                            currentRow.Room_Mate1 = null;
-                                        }
-                                        if (!currentRow.Room_Mate2) {
-                                            currentRow.Room_Mate2 = null;
-                                        }
-                                        if (!currentRow.Room_Mate3) {
-                                            currentRow.Room_Mate3 = null;
-                                        }
-                                        var holeList = $resource('/whole-team-lists/' + currentRow._id, null,
-                                            {
-                                                'update': {method: 'PUT'}
-                                            });
-                                        holeList.update(currentRow);
-
-                                    }
-                                }
-                            }
-                        }
-                    } else {
+                    if (answer.total === 0) {  // the response from the database is zero no records.
                         // This is a new team totally clean...
                         for (var j = 0; j < oddStuff.length; j++) {
                             var newRow = oddStuff[j];
@@ -257,6 +177,61 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
                             holeList.update(newRow);
                         }
                     }
+                    else {
+                        for (var i = 0; i < answer.total; i++) {
+
+                            /**
+                             * Now check for each row....  search the worksheet the the First and Last name....
+                             * @type {Array}
+                             */
+                            var currentRow = answer.results[i];
+                            var foundTeamMember = false;  // passed in data and database have the member if this is true;
+                            for (var j = 0; j < oddStuff.length; j++) {
+                                var needName = false;
+                                if (!oddStuff[j].Name) {
+                                    oddStuff[j].Name = oddStuff[j].FirstName + " " + oddStuff[j].LastName;
+                                    needName = true;
+                                }
+                                if (currentRow.Name.trim() == oddStuff[j].Name.trim()) {
+                                    var newRow = oddStuff[j];
+                                    var update = false;
+                                    var keys = Object.keys(newRow);
+                                    for (var k = 0; k < keys.length; k++) {
+                                        var nR = newRow[keys[k]];
+                                        nR = nR.trim();
+                                        var cR = currentRow[keys[k]];
+                                        if (cR) {
+                                            if (typeof cR === 'string' ) {
+                                                cR = cR.trim();
+                                            }
+                                        }
+                                        if (nR != cR) {
+                                            currentRow[keys[k]] = nR;
+                                            update = true;
+                                        }
+                                    }
+                                    if (update || needName) {
+                                        console.log("updated row:" + JSON.stringify(currentRow));
+                                        if (!currentRow.Room_Mate1) {
+                                            currentRow.Room_Mate1 = null;
+                                        }
+                                        if (!currentRow.Room_Mate2) {
+                                            currentRow.Room_Mate2 = null;
+                                        }
+                                        if (!currentRow.Room_Mate3) {
+                                            currentRow.Room_Mate3 = null;
+                                        }
+                                        var holeList = $resource('/whole-team-lists/' + currentRow._id, null,
+                                            {
+                                                'update': {method: 'PUT'}
+                                            });
+                                        holeList.update(currentRow);
+
+                                    }
+                                }
+                            }
+                        }
+                    }
                 });
 
             };
@@ -267,5 +242,5 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
         }
 
 
-    }
+    }]
 );
