@@ -3,9 +3,10 @@
 
     angular
         .module('whole-team-lists')
-        .factory('WholeTeamListsForm', factory);
+        // @ngInject
+        .factory('WholeTeamListsForm',factory);
 
-    function factory() {
+    function factory(TeamRoomMembers) {
 
         var getFormFields = function (disabled) {
 
@@ -79,10 +80,11 @@
                 },
                 {
                     key: 'Roommate',
-                    type: 'input',
+                    type: 'select',
                     templateOptions: {
-                        label: 'Roommate:',
+                        label: 'Roommate',
                         disabled: disabled,
+                        options: TeamRoomMembers.getTeamRetreat()
                     }
                 },
                 {
@@ -102,7 +104,8 @@
                         options: [{name: "Retreat Center", value: "Retreat Center"},
                             {name: "Campers", value: "Campers"},
                             {name: "None", value: "None"},
-                            {name: "Main Lodge - East Wing", value: "Main Lodge - East Wing"}]
+                            {name: "Main Lodge - East Wing", value: "Main-Lodge-East-Wing"},
+                            {name: "Main Lodge - South Hall", value: "Main-Lodge-South-Hall"}]
                     }
                 },
                 {

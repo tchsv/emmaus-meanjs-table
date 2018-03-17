@@ -12,7 +12,7 @@ angular.module('team-rooms')
                 var answer = nowWholeList.get(function() {
                     var noneValue = [];
                     noneValue['name'] = 'Empty';
-                    noneValue['value'] = null;
+                    noneValue['value'] = 'Empty';
                     returnList.push(noneValue);
                     console.log(answer);
                     for (var i = 0; i < answer.total; i++) {

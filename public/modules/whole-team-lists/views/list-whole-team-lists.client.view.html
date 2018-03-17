@@ -12,6 +12,14 @@
     <div>
         <table ng-table="tableParams" class="table table-striped table-bordered table-condensed ng-table-responsive" show-filter="true">
             <tr ng-repeat="wholeTeamList in $data">
+                <td>
+                    <div class="table-action">
+                        <a class="btn btn-default" title="Edit" href="/#!/whole-team-lists/{{wholeTeamList._id}}/edit">
+                            <span class="glyphicon glyphicon-edit"></span>
+                        </a>
+                    </div>
+                </td>
+
                 <td data-title="'Name'" sortable="'Name'" filter="{ 'Name': 'text' }">{{wholeTeamList.Name}}</td>
                 <td data-title="'FirstName'" sortable="'FirstName'" filter="{ 'FirstName': 'text' }">{{wholeTeamList.FirstName}}</td>
                 <td data-title="'LastName'" sortable="'LastName'" filter="{ 'LastName': 'text' }">{{wholeTeamList.LastName}}</td>
@@ -31,7 +39,7 @@
                 <td data-title="'Paid'" sortable="'Paid'" filter="{ 'Paid': 'text' }">{{wholeTeamList.Paid}}</td>
                 <td data-title="'PaidAmount'" sortable="'PaidAmount'" filter="{ 'PaidAmount': 'text' }">{{wholeTeamList.PaidAmount}}</td>
                 <td data-title="'CheckNumber'" sortable="'CheckNumber'" filter="{ 'CheckNumber': 'text' }">{{wholeTeamList.CheckNumber}}</td>
-                <td data-title="'Roommate'" sortable="'Roommate'" filter="{ 'Roommate': 'text' }">{{wholeTeamList.Roommate}}</td>
+                <td data-title="'Roommate'" sortable="'Roommate'" filter="{ 'Roommate': 'text' }">{{needRoomMate($data, wholeTeamList.Roommate)}}</td>
                 <td data-title="'RoomNumber'" sortable="'RoomNumber'" filter="{ 'RoomNumber': 'text' }">{{wholeTeamList.RoomNumber}}</td>
                 <td data-title="'Building'" sortable="'Building'" filter="{ 'Building': 'text' }">{{wholeTeamList.Building}}</td>
                 <td data-title="'Notes'" sortable="'Notes'" filter="{ 'Notes': 'text' }">{{wholeTeamList.Notes}}</td>

@@ -11,13 +11,22 @@ angular.module('whole-team-lists')
         $scope.authentication = Authentication;
         $scope.tableParams = TableSettings.getParams(WholeTeamLists);
         $scope.wholeTeamList = {};
+        function isTeamBuilding  (buildingName) {
+            if (buildingName === 'Retreat Center'){
+                return true;
+            } else if ( buildingName === 'Main Lodge - South Hall'){
+                return true;
+            }
+
+            return false;
+        }
         $scope.retreatCenterAll = function(stuff) {
             var sumValue =0;
             if (stuff.length == 0 ){
                 return 0;
             }
             for (var i = 0; i < stuff.length; i++) {
-                if ( stuff[i].Building == 'Retreat Center') {
+                if ( isTeamBuilding(stuff[i].Building)) {
                     sumValue++;
                 }
             }
@@ -34,7 +43,7 @@ angular.module('whole-team-lists')
                 return 0;
             }
             for (var i = 0; i < stuff.length; i++) {
-                if ( stuff[i].Building == 'Retreat Center') {
+                if ( isTeamBuilding(stuff[i].Building)) {
                     if (stuff[i].Paid == 'Yes' ){
                     sumValue++;
                 }}
@@ -48,7 +57,7 @@ angular.module('whole-team-lists')
             }
             for (var i = 0; i < stuff.length; i++) {
                 var value = stuff[i];
-                if ( stuff[i].Building == 'Retreat Center') {
+                if ( isTeamBuilding(stuff[i].Building)) {
                     if (stuff[i].Paid == 'Yes' ){
                         if (value.Roommate.length != 0) {
                             sumValue++;
@@ -63,7 +72,7 @@ angular.module('whole-team-lists')
             }
             for (var i = 0; i < stuff.length; i++) {
                 var value = stuff[i];
-                if ( stuff[i].Building == 'Retreat Center') {
+                if ( isTeamBuilding(stuff[i].Building)) {
                     if (stuff[i].Paid == 'Yes' ){
                         if (value.Roommate.length == 0) {
                             sumValue++;
@@ -79,7 +88,7 @@ angular.module('whole-team-lists')
             }
             for (var i = 0; i < stuff.length; i++) {
                 var value = stuff[i];
-                if ( stuff[i].Building == 'Retreat Center') {
+                if ( isTeamBuilding(stuff[i].Building)) {
                     if (stuff[i].Paid == 'Yes' ){
                         if (value.Roommate.length == 0) {
                             sumValue += value.Name + ',';
@@ -142,6 +151,43 @@ angular.module('whole-team-lists')
             returnData.unshift(keysS);
             return(returnData);
         };
+
+        /**
+         * rm1, rm2, bld, paid amount
+         * @param tableData
+         * @returns {Array}
+         */
+        $scope.cvsTeamRoomMatesPaidAmount = function(tableData) {
+            var returnData = [];
+
+
+                var keysS = Object();
+            keysS.LastName='LastName';
+            keysS.FirstName='FirstName';
+            keysS.PaidAmount='PaidAmount';
+            keysS.Roommate='Roommate';
+            keysS.Building='Building';
+            keysS.Committee='Committee';
+            keysS.Notes='Notes';
+
+            for(var i = 0; i < tableData.length; i++) {
+                if (isTeamBuilding(tableData[i].Building)) {
+                    var jig = Object();
+                    jig.LastName = tableData[i].LastName;
+                    jig.FirstName = tableData[i].FirstName;
+                    jig.PaidAmount = tableData[i].PaidAmount;
+                    jig.Roommate = $scope.needRoomMate(tableData,tableData[i].Roommate);
+                    jig.Building = tableData[i].Building;
+                    jig.Committee = tableData[i].Committee;
+                    jig.Notes = tableData[i].Notes;
+                    returnData.push(jig);
+                }
+            }
+
+            returnData.unshift(keysS);
+            return(returnData);
+        };
+
 
         $scope.cvsTeamPaidMeeting = function(tableData) {
             var returnData = [];
@@ -227,6 +273,40 @@ angular.module('whole-team-lists')
             }
             return sumValue;
         };
+        $scope.totalCash= function(stuff) {
+            var sumValue =0;
+            if (stuff.length == 0 ){
+                return 0;
+            }
+            for (var i = 0; i < stuff.length; i++) {
+                if ( stuff[i].CheckNumber == 0) {
+                    sumValue += stuff[i].PaidAmount;
+                }
+            }
+            return sumValue;
+        };
+        $scope.totalCheck= function(stuff) {
+            var sumValue =0;
+            if (stuff.length == 0 ){
+                return 0;
+            }
+            for (var i = 0; i < stuff.length; i++) {
+                if ( stuff[i].CheckNumber != 0) {
+                    sumValue += stuff[i].PaidAmount;
+                }
+            }
+            return sumValue;
+        };
+        $scope.totalGrand= function(stuff) {
+            var sumValue =0;
+            if (stuff.length == 0 ){
+                return 0;
+            }
+            for (var i = 0; i < stuff.length; i++) {
+                    sumValue += stuff[i].PaidAmount;
+            }
+            return sumValue;
+        };
 
 
         $scope.setFormFields = function (disabled) {
@@ -282,8 +362,25 @@ angular.module('whole-team-lists')
 
         $scope.toEditWholeTeamList = function () {
             $scope.wholeTeamList = WholeTeamLists.get({wholeTeamListId: $stateParams.wholeTeamListId});
+            // $scope.bubbaGump = TableSettings.getParams(WholeTeamLists);
+            $scope.bubbaGump = 'this is a test';
             $scope.setFormFields(false);
         };
+
+        $scope.needRoomMate = function(wholeTeamList, roomMateID) {
+            if ( roomMateID == 'Empty') {
+                return 'Empty';
+            }
+            for ( var i = 0; i < wholeTeamList.length; i++ ) {
+                var theID = wholeTeamList[i]._id;
+                if ( theID == roomMateID){
+                    return wholeTeamList[i].Name;
+                } else if ( theID == 'Empty') {
+                    return 'Empty';
+                }
+            }
+            return '';
+        }
 
     }
 
