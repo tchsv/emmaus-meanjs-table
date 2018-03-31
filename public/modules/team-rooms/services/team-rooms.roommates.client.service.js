@@ -6,7 +6,21 @@ angular.module('team-rooms')
     .factory('TeamRoomMembers', [ 'WholeTeamLists', 'TableSettings', 'Pilgrims', '$resource',
 	function( WholeTeamLists, TableSettings, Pilgrims , $resource) {
 
-		var getTeamRetreat =  function() {
+
+        function isTeamBuilding  (buildingName) {
+            if (buildingName === 'Retreat Center'){
+                return true;
+            } else if ( buildingName === 'Main Lodge - South Hall'){
+                return true;
+            } else if ( buildingName === 'Main-Lodge-South-Hall'){
+                return true;
+            }
+
+            return false;
+        }
+
+
+        var getTeamRetreat =  function() {
             var returnList = [];
             var nowWholeList = $resource('/whole-team-lists?count=999&page=1');
                 var answer = nowWholeList.get(function() {
@@ -14,16 +28,16 @@ angular.module('team-rooms')
                     noneValue['name'] = 'Empty';
                     noneValue['value'] = 'Empty';
                     returnList.push(noneValue);
-                    console.log(answer);
+                    // console.log('answer:' + JSON.stringify(answer, null, 1));
                     for (var i = 0; i < answer.total; i++) {
                         var value = [];
-                        if (answer.results[i].Building == 'Retreat Center') {
+                        if (isTeamBuilding(answer.results[i].Building)) {
                             value['name'] = answer.results[i].Name;
                             value['value'] = answer.results[i]._id;
                             returnList.push(value);
                         }
                     }
-                console.log(returnList);
+                // console.log('returnList:' + JSON.stringify(returnList, null, 1));
             });
 			return returnList;
 		};

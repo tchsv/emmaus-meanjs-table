@@ -24,7 +24,7 @@ angular.module('team-rooms').controller('TeamRoomsController', ['$scope', '$stat
 			var answer = nowWholeList.get(function() {
 				for (var i = 0; i < answer.total; i++) {
 					var value = [];
-					if (answer.results[i].Building == 'Retreat Center') {
+					if (isTeamBuilding(answer.results[i].Building)) {
 						value['name'] = answer.results[i].Name;
 						value['value'] = answer.results[i]._id;
 						returnList.push(value);
@@ -80,6 +80,48 @@ angular.module('team-rooms').controller('TeamRoomsController', ['$scope', '$stat
 
 		};
 
+        function isTeamBuilding  (buildingName) {
+            if (buildingName === 'Retreat Center'){
+                return true;
+            } else if ( buildingName === 'Main Lodge - South Hall'){
+                return true;
+            } else if ( buildingName === 'Main-Lodge-South-Hall'){
+                return true;
+            }
+
+            return false;
+        }
+        function needRoomMateNameFromID (wholeTeamList, roomMateID) {
+            if ( roomMateID == 'Empty') {
+                return 'Empty';
+            }
+            for ( var i = 0; i < wholeTeamList.length; i++ ) {
+                var theID = wholeTeamList[i]._id;
+                if ( theID == roomMateID){
+                    return wholeTeamList[i].Name;
+                } else if ( theID == 'Empty') {
+                    return 'Empty';
+                }
+            }
+            return '';
+        }
+        $scope.needRoomMates = function(wholeTeamList, roomMateIDArray) {
+            var returnString = '';
+            if ( roomMateIDArray.isEmpty) {
+                return 'Empty';
+            }
+            for ( var z = 0; z < roomMateIDArray.length; z++) {
+                for (var i = 0; i < wholeTeamList.length; i++) {
+                    var theID = wholeTeamList[i]._id;
+                    if (theID == roomMateIDArray[z]) {
+                        returnString += wholeTeamList[i].Name;
+                    } else if (theID == 'Empty') {
+                        returnString += 'Empty';
+                    }
+                }
+            }
+            return returnString;
+        }
 
 
 		$scope.pullDataFromMains =  function(tableData) {
@@ -89,25 +131,25 @@ angular.module('team-rooms').controller('TeamRoomsController', ['$scope', '$stat
 				console.log(answer);
 				for (var i = 0; i < answer.total; i++) {
 					var value = [];
-					if (answer.results[i].Building == 'Retreat Center') {
+					if (isTeamBuilding(answer.results[i].Building)) {
 						console.log(usedIDs + ' ' + answer.results[i]._id + ' ' + compareIt(usedIDs,answer.results[i]._id));
 						if ( compareIt(usedIDs,answer.results[i]._id) == -1) {
-							value['Building'] = 'Retreat Center';
-							value['RoomNumber'] = '0';
+							value['Building'] = answer.results[i].Building;
+							value['RoomNumber'] = answer.results[i].RoomNumber;
 							value['Roommate1'] = answer.results[i]._id;
 							usedIDs.push(answer.results[i]._id);
-							var roomMate2 = 'empty';
-							for (var j = 0; j < answer.total; j++) {
-								if (answer.results[j].Name == answer.results[i].Roommate) {
-									roomMate2 = answer.results[j]._id;
-									usedIDs.push(answer.results[j]._id);
-									break;
-								}
-							}
-							value['Roommate2'] = roomMate2;
+							usedIDs.push(answer.results[i].Roommate);
+							value['Roommate2'] = answer.results[i].Roommate;
+                            if (answer.results[i].Roommates[0].length > 0) {
+                                value['Roommates'] = answer.results[i].Roommates;
+                                for (var rmCd = 0; rmCd < answer.results[i].Roommates.length; rmCd++ ) {
+                                    usedIDs.push(answer.results[i].Roommates[rmCd]);
+                                }
+                            }
+							// value['Roommate2'] = needRoomMateNameFromID(answer.results,answer.results[i].Roommate)
 							var putting = $resource('/team-rooms');
-							var jval = '{ "Building":"Retreat Center", "RoomNumber":"0", "Roommate1":"' + value['Roommate1'] + '","Roommate2":"' + value['Roommate2'] + '"}';
-							putting.save(jval);
+							// var jval = '{ "Building":"Retreat Center", "RoomNumber":value['RoomNumber'], "Roommate1":"' + value['Roommate1'] + '","Roommate2":"' + value['Roommate2'] + '"}';
+							// putting.save(value);
 							$scope.tableParams.data.push(value);
 						}
 						else {

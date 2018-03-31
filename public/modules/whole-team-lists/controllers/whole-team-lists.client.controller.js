@@ -6,8 +6,8 @@ angular.module('whole-team-lists')
         ['$scope', '$stateParams'
             , '$location', 'Authentication'
             , 'WholeTeamLists', 'TableSettings'
-            , 'WholeTeamListsForm',
-    function ($scope, $stateParams, $location, Authentication, WholeTeamLists, TableSettings, WholeTeamListsForm) {
+            , 'WholeTeamListsForm', 'formlyConfig',
+    function ($scope, $stateParams, $location, Authentication, WholeTeamLists, TableSettings, WholeTeamListsForm, formlyConfig, formlyBootstrap) {
         $scope.authentication = Authentication;
         $scope.tableParams = TableSettings.getParams(WholeTeamLists);
         $scope.wholeTeamList = {};
@@ -16,10 +16,37 @@ angular.module('whole-team-lists')
                 return true;
             } else if ( buildingName === 'Main Lodge - South Hall'){
                 return true;
+            } else if ( buildingName === 'Main-Lodge-South-Hall'){
+                return true;
             }
+
 
             return false;
         }
+
+
+        $scope.perBuildingTotals = function (stuff) {
+            var runningTotals = {};
+            for (var i = 0; i < stuff.length; i++) {
+                if (runningTotals) {
+                    if (runningTotals[stuff[i].Building]) {
+                        runningTotals[stuff[i].Building]++
+                    } else {
+                        runningTotals[stuff[i].Building] = 1;
+                    }
+                } else {
+                    runningTotals[stuff[i].Building] = 1;
+                }
+            }
+            // var keys = Object.keys(runningTotals);
+            // var stayingInCount = '';
+            // for (var key = 0; key < keys.length; key++) {
+            //
+            // }
+
+            return JSON.stringify(runningTotals);
+        };
+
         $scope.retreatCenterAll = function(stuff) {
             var sumValue =0;
             if (stuff.length == 0 ){
@@ -380,6 +407,23 @@ angular.module('whole-team-lists')
                 }
             }
             return '';
+        }
+        $scope.needRoomMates = function(wholeTeamList, roomMateIDArray) {
+            var returnString = '';
+            if ( roomMateIDArray.isEmpty) {
+                return 'Empty';
+            }
+            for ( var z = 0; z < roomMateIDArray.length; z++) {
+                for (var i = 0; i < wholeTeamList.length; i++) {
+                    var theID = wholeTeamList[i]._id;
+                    if (theID == roomMateIDArray[z]) {
+                        returnString += wholeTeamList[i].Name;
+                    } else if (theID == 'Empty') {
+                        returnString += 'Empty';
+                    }
+                }
+            }
+            return returnString;
         }
 
     }

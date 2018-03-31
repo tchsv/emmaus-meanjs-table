@@ -4,7 +4,7 @@
 var ApplicationConfiguration = (function() {
 	// Init module configuration options
 	var applicationModuleName = 'emmauswalkhousingandregistration';
-	var applicationModuleVendorDependencies = ['ngResource', 'ngCookies',  'ui.router', 'ui.bootstrap', 'ui.utils', 'ngTable','api-check', 'formly', 'formlyBootstrap', 'ngSanitize', 'ngCsv'];
+	var applicationModuleVendorDependencies = ['ngResource', 'ngCookies',  'ui.router', 'ui.bootstrap', 'ui.utils', 'ngTable', 'formly', 'formlyBootstrap', 'ngSanitize', 'ngCsv'];
 
 	// Add a new vertical module
 	var registerModule = function(moduleName, dependencies) {
@@ -51,6 +51,28 @@ ApplicationConfiguration.registerModule('conf-room-tables', ['core']);
 
 // Use Applicaion configuration module to register a new module
 ApplicationConfiguration.registerModule('core');
+/* recommended */
+/* boolean.directive.js */
+
+/**
+ * @desc select & display a yes/no true/false with editable
+ * @example <div acme-order-calendar-range></div>
+ */
+
+// Use application configuration module to register a new module
+ApplicationConfiguration.registerModule('tables.widget', ['core']);
+
+
+angular
+    .module('tables.widget')
+    .directive('booleanYesNo', booleanYesNo);
+
+function booleanYesNo() {
+    /* implementation details */
+}
+
+
+
 'use strict';
 
 // Use application configuration module to register a new module
@@ -74,7 +96,7 @@ ApplicationConfiguration.registerModule('users');
 'use strict';
 
 // Use application configuration module to register a new module
-ApplicationConfiguration.registerModule('whole-team-lists', ['core']);
+ApplicationConfiguration.registerModule('whole-team-lists', ['core', 'tables.widget','team-rooms']);
 
 'use strict';
 
@@ -116,9 +138,11 @@ angular.module('conf-room-tables').config(['$stateProvider',
 'use strict';
 
 // Conf room tables controller
-angular.module('conf-room-tables').controller('ConfRoomTablesController', ['$scope', '$stateParams', '$location', 'Authentication'
-    , 'ConfRoomTables', 'TableSettings', 'ConfRoomTablesForm', '$q', 'ConfRoomTablesMembers', '$resource',
-    function ($scope, $stateParams, $location, Authentication, ConfRoomTables, TableSettings, ConfRoomTablesForm, $q, ConfRoomTablesMembers, $resource) {
+/* @ngInject */
+angular.module('conf-room-tables').controller('ConfRoomTablesController',
+    ["$scope", "$stateParams", "$location", "Authentication", "ConfRoomTables", "TableSettings", "ConfRoomTablesForm", "$q", "ConfRoomTablesMembers", "$resource", function ($scope, $stateParams, $location,
+              Authentication, ConfRoomTables, TableSettings,
+              ConfRoomTablesForm, $q, ConfRoomTablesMembers, $resource) {
         $scope.authentication = Authentication;
         $scope.tableParams = TableSettings.getParams(ConfRoomTables);
         $scope.confRoomTable = {};
@@ -366,9 +390,9 @@ angular.module('conf-room-tables').controller('ConfRoomTablesController', ['$sco
             $scope.setFormFields(false);
         };
 
-    }
+    }]
 
-]);
+);
 
 'use strict';
 
@@ -591,6 +615,7 @@ angular.module('conf-room-tables')
                     console.log(answer);
                     for (var i = 0; i < answer.total; i++) {
                         var value = [];
+                        var currentMember = answer.results[i];
                         if (answer.results[i].Committee == 'Table Leader') {
                             value['name'] = answer.results[i].Name;
                             value['value'] = answer.results[i]._id;
@@ -749,8 +774,9 @@ angular.module('conf-room-tables')
 'use strict';
 
 // Setting up route
-angular.module('core').config(['$stateProvider', '$urlRouterProvider',
-	function($stateProvider, $urlRouterProvider) {
+/* @ngInject */
+angular.module('core').config(
+	["$stateProvider", "$urlRouterProvider", function($stateProvider, $urlRouterProvider) {
 		// Redirect to home view when route not found
 		$urlRouterProvider.otherwise('/');
 
@@ -760,12 +786,13 @@ angular.module('core').config(['$stateProvider', '$urlRouterProvider',
 			url: '/',
 			templateUrl: 'modules/core/views/home.client.view.html'
 		});
-	}
-]);
-'use strict';
+	}]
+);
 
-angular.module('core').controller('HeaderController', ['$scope', 'Authentication', 'Menus',
-	function($scope, Authentication, Menus) {
+'use strict';
+/* @ngInject */
+angular.module('core').controller('HeaderController',
+	["$scope", "Authentication", "Menus", function($scope, Authentication, Menus) {
 		$scope.authentication = Authentication;
 		$scope.isCollapsed = false;
 		$scope.menu = Menus.getMenu('topbar');
@@ -778,12 +805,13 @@ angular.module('core').controller('HeaderController', ['$scope', 'Authentication
 		$scope.$on('$stateChangeSuccess', function() {
 			$scope.isCollapsed = false;
 		});
-	}
-]);
+	}]
+);
+
 'use strict';
 
-
-angular.module('core').controller('HomeController', ['$scope', 'Authentication','$window', '$resource',
+/* @ngInject */
+angular.module('core').controller('HomeController', ['$scope', 'Authentication', '$window', '$resource',
     function ($scope, Authentication, $window, $resource) {
         // This provides Authentication context.
         $scope.authentication = Authentication;
@@ -792,8 +820,8 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
         $scope.refreshPilgrimDataFromExcel = function () {
             var reader = new FileReader();
             var file = document.querySelector('input[type=file]').files[0];
-            if ( file.name) {
-            var name = file.name;
+            if (file.name) {
+                var name = file.name;
             } else {
                 return;
             }
@@ -814,60 +842,94 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
                 var oddStuff = $window.XLSX.utils.sheet_to_json(worksheet);
 
                 var nowWholeList = $resource('/pilgrims?count=999&page=1');
-                var answer = nowWholeList.get(function() {
+                var answer = nowWholeList.get(function () {
                     console.log(answer);
-                    for (var i = 0; i < answer.total; i++) {
+                    if (answer.total === 0) {
+                        for (var j = 0; j < oddStuff.length; j++) {
+                            currentRow = {};
+                            var newRow = oddStuff[j];
+                            var update = false;
+                            var keys = Object.keys(newRow);
+                            for (var k = 0; k < keys.length; k++) {
+                                var nR = newRow[keys[k]];
+                                nR = nR.trim();
+                                currentRow[keys[k]] = nR;
+                                update = true;
+                            }
+                            if (update) {
+                                console.log("updated row:" + JSON.stringify(currentRow));
+                                if (!currentRow.Room_Mate1) {
+                                    currentRow.Room_Mate1 = null;
+                                }
+                                if (!currentRow.Room_Mate2) {
+                                    currentRow.Room_Mate2 = null;
+                                }
+                                if (!currentRow.Room_Mate3) {
+                                    currentRow.Room_Mate3 = null;
+                                }
+                                var holeList = $resource('/pilgrims/' , null,
+                                    {
+                                        'set': {method: 'POST'}
+                                    });
+                                holeList.set(currentRow);
 
-                        /**
-                         * Now check for each row....  search the worksheet the the First and Last name....
-                         * @type {Array}
-                         */
-                        var currentRow = answer.results[i];
-                            for (var j = 0; j < oddStuff.length; j++) {
-                                if (currentRow.LastName.trim() == oddStuff[j].LastName.trim()) {
-                                    if (currentRow.FirstName.trim() == oddStuff[j].FirstName.trim()) {
-                                        var newRow = oddStuff[j];
-                                        var update = false;
-                                        var keys = Object.keys(newRow);
+                            }
+                        }
+
+                    }
+                    else {
+
+
+
+                        for (var i = 0; i < answer.total; i++) {
+
+                            /**
+                             * Now check for each row....  search the worksheet the the First and Last name....
+                             * @type {Array}
+                             */
+                            var currentRow = answer.results[i];
+                        for (var j = 0; j < oddStuff.length; j++) {
+                            if (currentRow.LastName.trim() == oddStuff[j].LastName.trim()) {
+                                if (currentRow.FirstName.trim() == oddStuff[j].FirstName.trim()) {
+                                    var newRow = oddStuff[j];
+                                    var update = false;
+                                    var keys = Object.keys(newRow);
                                         for ( var k = 0 ; k < keys.length; k++) {
-                                            var nR = newRow[keys[k]];
-                                            nR = nR.trim();
-                                            var cR = currentRow[keys[k]];
-                                            if (cR) {
-                                                cR = cR.trim();
-                                            }
+                                        var nR = newRow[keys[k]];
+                                        nR = nR.trim();
+                                        var cR = currentRow[keys[k]];
+                                        if (cR) {
+                                            cR = cR.trim();
+                                        }
                                             if ( nR != cR ) {
-                                                currentRow[keys[k]] = nR;
-                                                update = true;
-                                            }
+                                            currentRow[keys[k]] = nR;
+                                            update = true;
                                         }
+                                    }
                                         if ( update ) {
-                                            console.log("updated row:" + JSON.stringify(currentRow));
+                                        console.log("updated row:" + JSON.stringify(currentRow));
                                             if(!currentRow.Room_Mate1) {
-                                                currentRow.Room_Mate1 = null;
-                                            }
-                                            if(!currentRow.Room_Mate2) {
-                                                currentRow.Room_Mate2 = null;
-                                            }
-                                            if(!currentRow.Room_Mate3) {
-                                                currentRow.Room_Mate3 = null;
-                                            }
-                                            var holeList = $resource('/pilgrims/' + currentRow._id, null,
-                                                {
-                                                    'update': { method:'PUT' }
-                                                });
-                                            holeList.update(currentRow);
-
+                                            currentRow.Room_Mate1 = null;
                                         }
+                                            if(!currentRow.Room_Mate2) {
+                                            currentRow.Room_Mate2 = null;
+                                        }
+                                            if(!currentRow.Room_Mate3) {
+                                            currentRow.Room_Mate3 = null;
+                                        }
+                                        var holeList = $resource('/pilgrims/' + currentRow._id, null,
+                                            {
+                                                    'update': { method:'PUT' }
+                                            });
+                                        holeList.update(currentRow);
+
                                     }
                                 }
                             }
+                        }
+                        }
                     }
                 });
-
-
-
-
 
 
             };
@@ -879,7 +941,7 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
         $scope.refreshTeamDataFromExcel = function () {
             var reader = new FileReader();
             var file = document.querySelector('input[type=file]').files[0];
-            if ( file.name) {
+            if (file.name) {
                 var name = file.name;
             } else {
                 return;
@@ -901,59 +963,86 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
                 var oddStuff = $window.XLSX.utils.sheet_to_json(worksheet);
 
                 var nowWholeList = $resource('/whole-team-lists?count=999&page=1');
-                var answer = nowWholeList.get(function() {
+                var answer = nowWholeList.get(function () {
                     console.log(answer);
-                    for (var i = 0; i < answer.total; i++) {
-
-                        /**
-                         * Now check for each row....  search the worksheet the the First and Last name....
-                         * @type {Array}
-                         */
-                        var currentRow = answer.results[i];
+                    if (answer.total === 0) {  // the response from the database is zero no records.
+                        // This is a new team totally clean...
                         for (var j = 0; j < oddStuff.length; j++) {
-                            if (currentRow.Name.trim() == oddStuff[j].Name.trim()) {
+                            var newRow = oddStuff[j];
+                            console.log("updated row:" + JSON.stringify(newRow,null, 1));
+                            if (!newRow.Room_Mate1) {
+                                newRow.Room_Mate1 = null;
+                            }
+                            if (!newRow.Room_Mate2) {
+                                newRow.Room_Mate2 = null;
+                            }
+                            if (!newRow.Room_Mate3) {
+                                newRow.Room_Mate3 = null;
+                            }
+                            newRow.Name = newRow.FirstName + " " + newRow.LastName;
+                            var holeList = $resource('/whole-team-lists/', null,
+                                {
+                                    'update': {method: 'POST'}
+                                });
+                            holeList.update(newRow);
+                        }
+                    }
+                    else {
+                        for (var i = 0; i < answer.total; i++) {
+
+                            /**
+                             * Now check for each row....  search the worksheet the the First and Last name....
+                             * @type {Array}
+                             */
+                            var currentRow = answer.results[i];
+                            var foundTeamMember = false;  // passed in data and database have the member if this is true;
+                            for (var j = 0; j < oddStuff.length; j++) {
+                                var needName = false;
+                                if (!oddStuff[j].Name) {
+                                    oddStuff[j].Name = oddStuff[j].FirstName + " " + oddStuff[j].LastName;
+                                    needName = true;
+                                }
+                                if (currentRow.Name.trim() == oddStuff[j].Name.trim()) {
                                     var newRow = oddStuff[j];
                                     var update = false;
                                     var keys = Object.keys(newRow);
-                                    for ( var k = 0 ; k < keys.length; k++) {
+                                    for (var k = 0; k < keys.length; k++) {
                                         var nR = newRow[keys[k]];
                                         nR = nR.trim();
                                         var cR = currentRow[keys[k]];
                                         if (cR) {
-                                            cR = cR.trim();
+                                            if (typeof cR === 'string' ) {
+                                                cR = cR.trim();
+                                            }
                                         }
-                                        if ( nR != cR ) {
+                                        if (nR != cR) {
                                             currentRow[keys[k]] = nR;
                                             update = true;
                                         }
                                     }
-                                    if ( update ) {
+                                    if (update || needName) {
                                         console.log("updated row:" + JSON.stringify(currentRow));
-                                        if(!currentRow.Room_Mate1) {
+                                        if (!currentRow.Room_Mate1) {
                                             currentRow.Room_Mate1 = null;
                                         }
-                                        if(!currentRow.Room_Mate2) {
+                                        if (!currentRow.Room_Mate2) {
                                             currentRow.Room_Mate2 = null;
                                         }
-                                        if(!currentRow.Room_Mate3) {
+                                        if (!currentRow.Room_Mate3) {
                                             currentRow.Room_Mate3 = null;
                                         }
                                         var holeList = $resource('/whole-team-lists/' + currentRow._id, null,
                                             {
-                                                'update': { method:'PUT' }
+                                                'update': {method: 'PUT'}
                                             });
                                         holeList.update(currentRow);
 
                                     }
+                                }
                             }
                         }
                     }
                 });
-
-
-
-
-
 
             };
 
@@ -963,8 +1052,8 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
         }
 
 
-    }
-]);
+    }]
+);
 
 'use strict';
 
@@ -1189,9 +1278,9 @@ angular.module('core').service('Menus', [
         .module('core')
         .factory('TableSettings', factory);
 
-    factory.$inject = ['ngTableParams'];
+    factory.$inject = ['ngTableParams', '$q'];
 
-    function factory(ngTableParams) {
+    function factory(ngTableParams, $q) {
 
       var getData = function(Entity) {
         return function($defer, params) {
@@ -1202,6 +1291,14 @@ angular.module('core').service('Menus', [
   			};
 
       };
+      var getDataWithPromise = function(Entity) {
+          var deferred = $q.defer();
+  				Entity.get(params.url(), function(response) {
+  					params.total(response.total);
+                    deferred.resolve(response.results);
+  				});
+        return deferred.promise();
+      };
 
       var params = {
         page: 1,
@@ -1211,20 +1308,26 @@ angular.module('core').service('Menus', [
       var settings = {
         total: 0,
         counts: [5, 10, 15, 999],
-        filterDelay: 0,
+        filterDelay: 0
       };
 
       /* jshint ignore:start */
       var tableParams = new ngTableParams(params, settings);
       /* jshint ignore:end */
 
-      var getParams = function(Entity) {
-        tableParams.settings({getData: getData(Entity)});
-        return tableParams;
-      };
+        var getParams = function(Entity) {
+            tableParams.settings({getData: getData(Entity)});
+            return tableParams;
+        };
+        var getParamsWithPromise = function(Entity) {
+            tableParams.settings({getDataWithPromise: getData(Entity)});
+            return tableParams;
+        };
+
 
       var service = {
-        getParams: getParams
+        getParams: getParams,
+          getParamsWithPromise: getParamsWithPromise
       };
 
       return service;
@@ -2130,7 +2233,7 @@ angular.module('team-rooms').controller('TeamRoomsController', ['$scope', '$stat
 			var answer = nowWholeList.get(function() {
 				for (var i = 0; i < answer.total; i++) {
 					var value = [];
-					if (answer.results[i].Building == 'Retreat Center') {
+					if (isTeamBuilding(answer.results[i].Building)) {
 						value['name'] = answer.results[i].Name;
 						value['value'] = answer.results[i]._id;
 						returnList.push(value);
@@ -2186,6 +2289,31 @@ angular.module('team-rooms').controller('TeamRoomsController', ['$scope', '$stat
 
 		};
 
+        function isTeamBuilding  (buildingName) {
+            if (buildingName === 'Retreat Center'){
+                return true;
+            } else if ( buildingName === 'Main Lodge - South Hall'){
+                return true;
+            } else if ( buildingName === 'Main-Lodge-South-Hall'){
+                return true;
+            }
+
+            return false;
+        }
+        function needRoomMateNameFromID (wholeTeamList, roomMateID) {
+            if ( roomMateID == 'Empty') {
+                return 'Empty';
+            }
+            for ( var i = 0; i < wholeTeamList.length; i++ ) {
+                var theID = wholeTeamList[i]._id;
+                if ( theID == roomMateID){
+                    return wholeTeamList[i].Name;
+                } else if ( theID == 'Empty') {
+                    return 'Empty';
+                }
+            }
+            return '';
+        }
 
 
 		$scope.pullDataFromMains =  function(tableData) {
@@ -2195,25 +2323,19 @@ angular.module('team-rooms').controller('TeamRoomsController', ['$scope', '$stat
 				console.log(answer);
 				for (var i = 0; i < answer.total; i++) {
 					var value = [];
-					if (answer.results[i].Building == 'Retreat Center') {
+					if (isTeamBuilding(answer.results[i].Building)) {
 						console.log(usedIDs + ' ' + answer.results[i]._id + ' ' + compareIt(usedIDs,answer.results[i]._id));
 						if ( compareIt(usedIDs,answer.results[i]._id) == -1) {
-							value['Building'] = 'Retreat Center';
-							value['RoomNumber'] = '0';
+							value['Building'] = answer.results[i].Building;
+							value['RoomNumber'] = answer.results[i].RoomNumber;
 							value['Roommate1'] = answer.results[i]._id;
 							usedIDs.push(answer.results[i]._id);
-							var roomMate2 = 'empty';
-							for (var j = 0; j < answer.total; j++) {
-								if (answer.results[j].Name == answer.results[i].Roommate) {
-									roomMate2 = answer.results[j]._id;
-									usedIDs.push(answer.results[j]._id);
-									break;
-								}
-							}
-							value['Roommate2'] = roomMate2;
+							usedIDs.push(answer.results[i].Roommate);
+							value['Roommate2'] = answer.results[i].Roommate;
+							// value['Roommate2'] = needRoomMateNameFromID(answer.results,answer.results[i].Roommate)
 							var putting = $resource('/team-rooms');
-							var jval = '{ "Building":"Retreat Center", "RoomNumber":"0", "Roommate1":"' + value['Roommate1'] + '","Roommate2":"' + value['Roommate2'] + '"}';
-							putting.save(jval);
+							// var jval = '{ "Building":"Retreat Center", "RoomNumber":value['RoomNumber'], "Roommate1":"' + value['Roommate1'] + '","Roommate2":"' + value['Roommate2'] + '"}';
+							// putting.save(value);
 							$scope.tableParams.data.push(value);
 						}
 						else {
@@ -2462,24 +2584,38 @@ angular.module('team-rooms')
     .factory('TeamRoomMembers', [ 'WholeTeamLists', 'TableSettings', 'Pilgrims', '$resource',
 	function( WholeTeamLists, TableSettings, Pilgrims , $resource) {
 
-		var getTeamRetreat =  function() {
+
+        function isTeamBuilding  (buildingName) {
+            if (buildingName === 'Retreat Center'){
+                return true;
+            } else if ( buildingName === 'Main Lodge - South Hall'){
+                return true;
+            } else if ( buildingName === 'Main-Lodge-South-Hall'){
+                return true;
+            }
+
+            return false;
+        }
+
+
+        var getTeamRetreat =  function() {
             var returnList = [];
             var nowWholeList = $resource('/whole-team-lists?count=999&page=1');
                 var answer = nowWholeList.get(function() {
                     var noneValue = [];
                     noneValue['name'] = 'Empty';
-                    noneValue['value'] = null;
+                    noneValue['value'] = 'Empty';
                     returnList.push(noneValue);
-                    console.log(answer);
+                    // console.log('answer:' + JSON.stringify(answer, null, 1));
                     for (var i = 0; i < answer.total; i++) {
                         var value = [];
-                        if (answer.results[i].Building == 'Retreat Center') {
+                        if (isTeamBuilding(answer.results[i].Building)) {
                             value['name'] = answer.results[i].Name;
                             value['value'] = answer.results[i]._id;
                             returnList.push(value);
                         }
                     }
-                console.log(returnList);
+                // console.log('returnList:' + JSON.stringify(returnList, null, 1));
             });
 			return returnList;
 		};
@@ -2802,18 +2938,59 @@ angular.module('whole-team-lists').config(['$stateProvider',
 'use strict';
 
 // Whole team lists controller
-angular.module('whole-team-lists').controller('WholeTeamListsController', ['$scope', '$stateParams', '$location', 'Authentication', 'WholeTeamLists', 'TableSettings', 'WholeTeamListsForm',
+angular.module('whole-team-lists')
+    .controller('WholeTeamListsController',
+        ['$scope', '$stateParams'
+            , '$location', 'Authentication'
+            , 'WholeTeamLists', 'TableSettings'
+            , 'WholeTeamListsForm',
     function ($scope, $stateParams, $location, Authentication, WholeTeamLists, TableSettings, WholeTeamListsForm) {
         $scope.authentication = Authentication;
         $scope.tableParams = TableSettings.getParams(WholeTeamLists);
         $scope.wholeTeamList = {};
+        function isTeamBuilding  (buildingName) {
+            if (buildingName === 'Retreat Center'){
+                return true;
+            } else if ( buildingName === 'Main Lodge - South Hall'){
+                return true;
+            } else if ( buildingName === 'Main-Lodge-South-Hall'){
+                return true;
+            }
+
+
+            return false;
+        }
+
+
+        $scope.perBuildingTotals = function (stuff) {
+            var runningTotals = {};
+            for (var i = 0; i < stuff.length; i++) {
+                if (runningTotals) {
+                    if (runningTotals[stuff[i].Building]) {
+                        runningTotals[stuff[i].Building]++
+                    } else {
+                        runningTotals[stuff[i].Building] = 1;
+                    }
+                } else {
+                    runningTotals[stuff[i].Building] = 1;
+                }
+            }
+            // var keys = Object.keys(runningTotals);
+            // var stayingInCount = '';
+            // for (var key = 0; key < keys.length; key++) {
+            //
+            // }
+
+            return JSON.stringify(runningTotals);
+        };
+
         $scope.retreatCenterAll = function(stuff) {
             var sumValue =0;
             if (stuff.length == 0 ){
                 return 0;
             }
             for (var i = 0; i < stuff.length; i++) {
-                if ( stuff[i].Building == 'Retreat Center') {
+                if ( isTeamBuilding(stuff[i].Building)) {
                     sumValue++;
                 }
             }
@@ -2830,7 +3007,7 @@ angular.module('whole-team-lists').controller('WholeTeamListsController', ['$sco
                 return 0;
             }
             for (var i = 0; i < stuff.length; i++) {
-                if ( stuff[i].Building == 'Retreat Center') {
+                if ( isTeamBuilding(stuff[i].Building)) {
                     if (stuff[i].Paid == 'Yes' ){
                     sumValue++;
                 }}
@@ -2844,7 +3021,7 @@ angular.module('whole-team-lists').controller('WholeTeamListsController', ['$sco
             }
             for (var i = 0; i < stuff.length; i++) {
                 var value = stuff[i];
-                if ( stuff[i].Building == 'Retreat Center') {
+                if ( isTeamBuilding(stuff[i].Building)) {
                     if (stuff[i].Paid == 'Yes' ){
                         if (value.Roommate.length != 0) {
                             sumValue++;
@@ -2859,7 +3036,7 @@ angular.module('whole-team-lists').controller('WholeTeamListsController', ['$sco
             }
             for (var i = 0; i < stuff.length; i++) {
                 var value = stuff[i];
-                if ( stuff[i].Building == 'Retreat Center') {
+                if ( isTeamBuilding(stuff[i].Building)) {
                     if (stuff[i].Paid == 'Yes' ){
                         if (value.Roommate.length == 0) {
                             sumValue++;
@@ -2875,7 +3052,7 @@ angular.module('whole-team-lists').controller('WholeTeamListsController', ['$sco
             }
             for (var i = 0; i < stuff.length; i++) {
                 var value = stuff[i];
-                if ( stuff[i].Building == 'Retreat Center') {
+                if ( isTeamBuilding(stuff[i].Building)) {
                     if (stuff[i].Paid == 'Yes' ){
                         if (value.Roommate.length == 0) {
                             sumValue += value.Name + ',';
@@ -2894,6 +3071,7 @@ angular.module('whole-team-lists').controller('WholeTeamListsController', ['$sco
             tableData.unshift(keysS);
             return(tableData);
         };
+
 
 
         $scope.cvsMe2009 = function(tableData) {
@@ -2938,6 +3116,113 @@ angular.module('whole-team-lists').controller('WholeTeamListsController', ['$sco
             return(returnData);
         };
 
+        /**
+         * rm1, rm2, bld, paid amount
+         * @param tableData
+         * @returns {Array}
+         */
+        $scope.cvsTeamRoomMatesPaidAmount = function(tableData) {
+            var returnData = [];
+
+
+                var keysS = Object();
+            keysS.LastName='LastName';
+            keysS.FirstName='FirstName';
+            keysS.PaidAmount='PaidAmount';
+            keysS.Roommate='Roommate';
+            keysS.Building='Building';
+            keysS.Committee='Committee';
+            keysS.Notes='Notes';
+
+            for(var i = 0; i < tableData.length; i++) {
+                if (isTeamBuilding(tableData[i].Building)) {
+                    var jig = Object();
+                    jig.LastName = tableData[i].LastName;
+                    jig.FirstName = tableData[i].FirstName;
+                    jig.PaidAmount = tableData[i].PaidAmount;
+                    jig.Roommate = $scope.needRoomMate(tableData,tableData[i].Roommate);
+                    jig.Building = tableData[i].Building;
+                    jig.Committee = tableData[i].Committee;
+                    jig.Notes = tableData[i].Notes;
+                    returnData.push(jig);
+                }
+            }
+
+            returnData.unshift(keysS);
+            return(returnData);
+        };
+
+
+        $scope.cvsTeamPaidMeeting = function(tableData) {
+            var returnData = [];
+            var keysS = Object();
+            keysS.LastName='LastName';
+            keysS.FirstName='FirstName';
+            keysS.Paid='Paid';
+            keysS.PaidAmount='PaidAmount';
+            keysS.CheckNumber='CheckNumber';
+            keysS.Notes='Notes';
+
+            for(var i = 0; i < tableData.length; i++) {
+                var jig = Object();
+                jig.LastName = tableData[i].LastName;
+                jig.FirstName = tableData[i].FirstName;
+                jig.Paid = tableData[i].Paid;
+                jig.PaidAmount = tableData[i].PaidAmount;
+                jig.CheckNumber = tableData[i].CheckNumber;
+                jig.Notes = tableData[i].Notes;
+                returnData.push(jig);
+            }
+
+            returnData.unshift(keysS);
+            return(returnData);
+        };
+        $scope.cvsTeamMeeting = function(tableData) {
+            var returnData = [];
+            var keysS = Object();
+            keysS.LastName='LastName';
+            keysS.FirstName='FirstName';
+            keysS.Email='Email';
+            keysS.AreaCode='AC';
+            keysS.Phone='Phone';
+            keysS.Street_Address='Street_Address';
+            keysS.City='City';
+            keysS.State='State';
+            keysS.Zip='Zip';
+            keysS.OrignalWalkNumber='Orignal Walk Number';
+            keysS.ComboArea = 'Talk Given Or Area of Service On Walk';
+                //,{'Committee': 'Committee'}
+                //,{'Chairperson': 'Chairperson'}
+                //,{'Talk': 'Talk'}
+
+
+            for(var i = 0; i < tableData.length; i++) {
+                var jig = Object();
+                jig.LastName = tableData[i].LastName;
+                jig.FirstName = tableData[i].FirstName;
+                jig.Email = tableData[i].Email;
+                jig.AreaCode = tableData[i].AreaCode;
+                jig.Phone = tableData[i].Phone;
+                jig.Street_Address = tableData[i].Street_Address;
+                jig.City = tableData[i].City;
+                jig.State = tableData[i].State;
+                jig.Zip = tableData[i].Zip;
+                jig.OrignalWalkNumber = tableData[i].OrignalWalkNumber;
+                jig.ComboArea = '';
+                if ( tableData[i].Chairperson == 'Yes'){
+                    jig.ComboArea += 'Chair';
+                }
+                jig.ComboArea += ' ' + tableData[i].Committee;
+                if (tableData[i].Talk !== 'N/A') {
+                    jig.ComboArea += '; ' + tableData[i].Talk;
+                }
+                returnData.push(jig);
+            }
+
+            returnData.unshift(keysS);
+            return(returnData);
+        };
+
 
 
         $scope.totalUnPaid= function(stuff) {
@@ -2949,6 +3234,40 @@ angular.module('whole-team-lists').controller('WholeTeamListsController', ['$sco
                 if ( stuff[i].Paid == 'No') {
                     sumValue++;
                 }
+            }
+            return sumValue;
+        };
+        $scope.totalCash= function(stuff) {
+            var sumValue =0;
+            if (stuff.length == 0 ){
+                return 0;
+            }
+            for (var i = 0; i < stuff.length; i++) {
+                if ( stuff[i].CheckNumber == 0) {
+                    sumValue += stuff[i].PaidAmount;
+                }
+            }
+            return sumValue;
+        };
+        $scope.totalCheck= function(stuff) {
+            var sumValue =0;
+            if (stuff.length == 0 ){
+                return 0;
+            }
+            for (var i = 0; i < stuff.length; i++) {
+                if ( stuff[i].CheckNumber != 0) {
+                    sumValue += stuff[i].PaidAmount;
+                }
+            }
+            return sumValue;
+        };
+        $scope.totalGrand= function(stuff) {
+            var sumValue =0;
+            if (stuff.length == 0 ){
+                return 0;
+            }
+            for (var i = 0; i < stuff.length; i++) {
+                    sumValue += stuff[i].PaidAmount;
             }
             return sumValue;
         };
@@ -3007,8 +3326,25 @@ angular.module('whole-team-lists').controller('WholeTeamListsController', ['$sco
 
         $scope.toEditWholeTeamList = function () {
             $scope.wholeTeamList = WholeTeamLists.get({wholeTeamListId: $stateParams.wholeTeamListId});
+            // $scope.bubbaGump = TableSettings.getParams(WholeTeamLists);
+            $scope.bubbaGump = 'this is a test';
             $scope.setFormFields(false);
         };
+
+        $scope.needRoomMate = function(wholeTeamList, roomMateID) {
+            if ( roomMateID == 'Empty') {
+                return 'Empty';
+            }
+            for ( var i = 0; i < wholeTeamList.length; i++ ) {
+                var theID = wholeTeamList[i]._id;
+                if ( theID == roomMateID){
+                    return wholeTeamList[i].Name;
+                } else if ( theID == 'Empty') {
+                    return 'Empty';
+                }
+            }
+            return '';
+        }
 
     }
 
@@ -3032,9 +3368,10 @@ angular.module('whole-team-lists').factory('WholeTeamLists', ['$resource',
 
     angular
         .module('whole-team-lists')
-        .factory('WholeTeamListsForm', factory);
+        // @ngInject
+        .factory('WholeTeamListsForm',factory);
 
-    function factory() {
+    function factory(TeamRoomMembers) {
 
         var getFormFields = function (disabled) {
 
@@ -3078,7 +3415,7 @@ angular.module('whole-team-lists').factory('WholeTeamLists', ['$resource',
                         label: 'Paid:',
                         disabled: disabled,
                         options: [{name: "Yes", value: "Yes"},
-                            {name: "No", value: "No"},
+                            {name: "No", value: "No"}
                         ]
                     }
                 },
@@ -3091,19 +3428,80 @@ angular.module('whole-team-lists').factory('WholeTeamLists', ['$resource',
                     }
                 },
                 {
-                    key: 'Roommate',
+                    key: 'CheckNumber',
                     type: 'input',
                     templateOptions: {
-                        label: 'Roommate:',
+                        label: 'Check Number:',
+                        disabled: disabled
+                    }
+                },
+                {
+                    key: 'Notes',
+                    type: 'input',
+                    templateOptions: {
+                        label: 'Notes:',
+                        disabled: disabled
+                    }
+                },
+                {
+                    key: 'Roommate',
+                    type: 'select',
+                    templateOptions: {
+                        label: 'Roommate',
                         disabled: disabled,
+                        options: TeamRoomMembers.getTeamRetreat()
+                    }
+                },
+                {
+                    key: 'Roommates',
+                    type: 'multiselect',
+                    templateOptions: {
+                        label: 'Roommates',
+                        disabled: disabled,
+                        options: TeamRoomMembers.getTeamRetreat()
                     }
                 },
                 {
                     key: 'RoomNumber',
-                    type: 'input',
+                    type: 'select',
                     templateOptions: {
-                        label: 'RoomNumber:',
+                        label: 'Room Number:',
                         disabled: disabled,
+                        options: [
+                            {'name':'401','value':'401'},
+                            {'name':'402','value':'402'},
+                            {'name':'403','value':'403'},
+                            {'name':'404','value':'404'},
+                            {'name':'405','value':'405'},
+                            {'name':'406','value':'406'},
+                            {'name':'407','value':'407'},
+                            {'name':'408','value':'408'},
+                            {'name':'409','value':'409'},
+                            {'name':'410','value':'410'},
+                            {'name':'411','value':'411'},
+                            {'name':'412','value':'412'},
+                            {'name':'501','value':'501'},
+                            {'name':'502','value':'502'},
+                            {'name':'503','value':'503'},
+                            {'name':'504','value':'504'},
+                            {'name':'505','value':'505'},
+                            {'name':'506','value':'506'},
+                            {'name':'507','value':'507'},
+                            {'name':'508','value':'508'},
+                            {'name':'509','value':'509'},
+                            {'name':'510','value':'510'},
+                            {'name':'511','value':'511'},
+                            {'name':'512','value':'512'},
+                            {'name':'308','value':'308'},
+                            {'name':'309','value':'309'},
+                            {'name':'310','value':'310'},
+                            {'name':'311','value':'311'},
+                            {'name':'312','value':'312'},
+                            {'name':'313','value':'313'},
+                            {'name':'314','value':'314'},
+                            {'name':'NurseRoom','value':'NurseRoom'},
+                            {'name':'HillCrest1','value':'HillCrest1'}
+                        ]
                     }
                 },
                 {
@@ -3115,7 +3513,8 @@ angular.module('whole-team-lists').factory('WholeTeamLists', ['$resource',
                         options: [{name: "Retreat Center", value: "Retreat Center"},
                             {name: "Campers", value: "Campers"},
                             {name: "None", value: "None"},
-                            {name: "Main Lodge - East Wing", value: "Main Lodge - East Wing"}]
+                            {name: "Main Lodge - East Wing", value: "Main-Lodge-East-Wing"},
+                            {name: "Main Lodge - South Hall", value: "Main-Lodge-South-Hall"}]
                     }
                 },
                 {
@@ -3213,7 +3612,7 @@ angular.module('whole-team-lists').factory('WholeTeamLists', ['$resource',
                         label: 'OrignalWalkNumber:',
                         disabled: disabled
                     }
-                },
+                }
 
             ];
 
@@ -3228,5 +3627,6 @@ angular.module('whole-team-lists').factory('WholeTeamLists', ['$resource',
         return service;
 
     }
+    factory.$inject = ["TeamRoomMembers"];
 
 })();

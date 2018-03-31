@@ -117,6 +117,11 @@ var WholeTeamListSchema = new Schema({
 		default: '',
 		trim: true
 	},
+	Roommates: {
+		type: Array,
+		default: '',
+		trim: true
+	},
 	RoomNumber: {
 		type: String,
 		default: '',

@@ -11,7 +11,7 @@ angular.module('team-rooms')
             if (!attrs.memberid) {
                 scope.localTeamMember = 'empty';
             }
-            else if (attrs.memberid == 'empty') {
+            else if (attrs.memberid == 'empty' || attrs.memberid == 'Empty') {
                 scope.localTeamMember = 'empty';
             }
             else {

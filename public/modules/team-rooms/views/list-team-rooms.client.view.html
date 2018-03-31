@@ -1,4 +1,4 @@
-<section data-ng-controller="TeamRoomsController">
+<section data-ng-controller="TeamRoomsController" >
     <div class="page-header">
         <h1>Team rooms</h1>
     </div>
@@ -22,6 +22,7 @@
                 <td data-title="'RoomNumber'" sortable="'RoomNumber'" filter="{ 'RoomNumber': 'text' }">{{teamRoom.RoomNumber}}</td>
                 <td data-title="'Roommate1'" sortable="'Roommate1'" filter="{ 'Roommate1': 'text' }"><team-room-team-member-name memberid="{{teamRoom.Roommate1}}"/></td>
                 <td data-title="'Roommate2'" sortable="'Roommate2'" filter="{ 'Roommate2': 'text' }"><team-room-team-member-name memberid="{{teamRoom.Roommate2}}"/></td>
+                <td data-title="'Roommates'" sortable="'Roommates'" filter="{ 'Roommates': 'text' }" ng-repeat="thismate in teamRoom.Roommates"><team-room-team-member-name memberid="{{thismate}}"/></td>
                 <td>
                     <div class="table-actions">
                 <td>
