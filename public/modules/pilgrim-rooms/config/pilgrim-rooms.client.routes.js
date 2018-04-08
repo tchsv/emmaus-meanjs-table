@@ -9,6 +9,10 @@ angular.module('pilgrim-rooms').config(['$stateProvider',
 			url: '/pilgrim-rooms',
 			templateUrl: 'modules/pilgrim-rooms/views/list-pilgrim-rooms.client.view.html'
 		}).
+		state('newListPilgrimRooms', {
+			url: '/new-pilgrim-rooms',
+			templateUrl: 'modules/pilgrim-rooms/views/new-list-pilgrim-rooms.client.view.html'
+		}).
 		state('createPilgrimRoom', {
 			url: '/pilgrim-rooms/create',
 			templateUrl: 'modules/pilgrim-rooms/views/create-pilgrim-room.client.view.html'

@@ -5,6 +5,7 @@ angular.module('team-rooms').controller('TeamRoomsController', ['$scope', '$stat
 	function($scope, $stateParams, $location, Authentication, TeamRooms, TableSettings, TeamRoomsForm, $resource, $q ) {
 		$scope.authentication = Authentication;
 		$scope.tableParams = TableSettings.getParams(TeamRooms);
+		// $scope.tableParams = pushTableToTeamsTable(TeamRooms);
 		$scope.teamRoom = {};
 
 		$scope.setFormFields = function(disabled) {
@@ -147,7 +148,7 @@ angular.module('team-rooms').controller('TeamRoomsController', ['$scope', '$stat
                                 }
                             }
 							// value['Roommate2'] = needRoomMateNameFromID(answer.results,answer.results[i].Roommate)
-							var putting = $resource('/team-rooms');
+							// var putting = $resource('/team-rooms');
 							// var jval = '{ "Building":"Retreat Center", "RoomNumber":value['RoomNumber'], "Roommate1":"' + value['Roommate1'] + '","Roommate2":"' + value['Roommate2'] + '"}';
 							// putting.save(value);
 							$scope.tableParams.data.push(value);

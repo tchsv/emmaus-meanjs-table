@@ -91,7 +91,13 @@ angular.module('pilgrim-rooms').controller('PilgrimRoomsController', ['$scope', 
                 tableUpdate.update(tableGetValue);
             });
         }
-
+        function translateUpDown(RoomNumber) {
+            if (RoomNumber > 67) {
+                return 'Up';
+            } else {
+                return 'Down';
+            }
+        }
         $scope.pushRoomNumberToMainTables = function (tableData) {
             for (var i = 0; i < tableData.length; i++) {
                 var RoomNumber = tableData[i]['RoomNumber'];
@@ -104,7 +110,108 @@ angular.module('pilgrim-rooms').controller('PilgrimRoomsController', ['$scope', 
 
         };
 
+    //     <!--//TeamRoommate: {-->
+    //     <!--//PilgrimRoommate1: {-->
+    //     <!--//PilgrimRoommate2: {-->
+    //     <!--//RoomNumber: {-->
+    //     <!--//UpDown: {-->
+    //     <!--//Building: {-->
+        $scope.pullDataFromMains =  function(tableData) {
+            PilgrimRoomTablesMembers.getTeamWp().then(function (teamList) {
+                PilgrimRoomTablesMembers.getPilgrimWp().then(function (pilgrimList) {
+                var usedIDs = [];
+                // go over team list and look for room number
 
+                    // if no room number just list person put in usedIDs
+                    // if room number present then
+                        // go over pilgrim list and see if room number is there
+                            // if room number there then check for room mate 1 empty if otherwise put in room mate 2 put in usedIDs
+                // go over pilgrim list in same way listings if not having room number and not used.
+                for (var tri = 0 ; tri < teamList.length; tri++){
+                    var valueOfRoom = [];
+                    if (!usedIDs.includes(teamList[tri]._id) && teamList[tri].RoomNumber === '') {
+                        valueOfRoom['TeamRoommate'] = teamList[tri]._id;
+                        valueOfRoom['PilgrimRoommate1'] = null;
+                        valueOfRoom['PilgrimRoommate2'] = null;
+                        valueOfRoom['PilgrimRoommate3'] = null;
+                        valueOfRoom['RoomNumber'] = '';
+                        valueOfRoom['UpDown'] = '';
+                        valueOfRoom['Building'] = teamList[tri].Building;
+                        usedIDs.push(teamList[tri]._id);
+
+                    } else {
+                        valueOfRoom['TeamRoommate'] = teamList[tri]._id;
+                        valueOfRoom['PilgrimRoommate1'] = null;
+                        valueOfRoom['PilgrimRoommate2'] = null;
+                        valueOfRoom['PilgrimRoommate3'] = null;
+                        valueOfRoom['RoomNumber'] = teamList[tri].RoomNumber;
+                        valueOfRoom['UpDown'] = translateUpDown(teamList[tri].RoomNumber);
+                        valueOfRoom['Building'] = teamList[tri].Building;
+
+                        for (var pri = 0; pri < pilgrimList.length; pri++) {
+                            if (!usedIDs.includes(pilgrimList[pri]._id) && pilgrimList[pri].RoomNumber == teamList[tri].RoomNumber) {
+                                if (!valueOfRoom['PilgrimRoommate1']) {
+                                    valueOfRoom['PilgrimRoommate1'] = pilgrimList[pri]._id;
+                                } else if (!valueOfRoom['PilgrimRoommate2']) {
+                                    valueOfRoom['PilgrimRoommate2'] = pilgrimList[pri]._id ;
+                                } else if (!valueOfRoom['PilgrimRoommate3']) {
+                                    valueOfRoom['PilgrimRoommate3'] = pilgrimList[pri]._id ;
+                                }
+                                usedIDs.push(pilgrimList[pri]._id);
+                            }
+                        }
+                    }
+                    $scope.tableParams.data.push(valueOfRoom);
+                }
+                for (var tri = 0 ; tri < pilgrimList.length; tri++){
+                    var valueOfRoom = [];
+                    if (!usedIDs.includes(pilgrimList[tri]._id) && pilgrimList[tri].RoomNumber === '') {
+                        valueOfRoom['PilgrimRoommate1'] = pilgrimList[tri]._id;
+                        valueOfRoom['TeamRoommate'] = null;
+                        valueOfRoom['PilgrimRoommate2'] = null;
+                        valueOfRoom['PilgrimRoommate3'] = null;
+                        valueOfRoom['RoomNumber'] = '';
+                        valueOfRoom['UpDown'] = '';
+                        valueOfRoom['Building'] = pilgrimList[tri].Building;
+                        usedIDs.push(pilgrimList[tri]._id);
+
+                    } else {
+                        valueOfRoom['PilgrimRoommate1'] = pilgrimList[tri]._id;
+                        valueOfRoom['TeamRoommate'] = null;
+                        valueOfRoom['PilgrimRoommate2'] = null;
+                        valueOfRoom['PilgrimRoommate3'] = null;
+                        valueOfRoom['RoomNumber'] = pilgrimList[tri].RoomNumber;
+                        valueOfRoom['UpDown'] = translateUpDown(pilgrimList[tri].RoomNumber);
+                        valueOfRoom['Building'] = pilgrimList[tri].Building;
+
+                        for (var pri = 0; pri < pilgrimList.length; pri++) {
+                            if (!usedIDs.includes(pilgrimList[pri]._id) && pilgrimList[pri].RoomNumber == pilgrimList[tri].RoomNumber) {
+                                if (!valueOfRoom['PilgrimRoommate1']) {
+                                    valueOfRoom['PilgrimRoommate1'] = pilgrimList[pri]._id;
+                                } else if (!valueOfRoom['PilgrimRoommate2']) {
+                                    valueOfRoom['PilgrimRoommate2'] = pilgrimList[pri]._id ;
+                                } else if (!valueOfRoom['PilgrimRoommate3']) {
+                                    valueOfRoom['PilgrimRoommate3'] = pilgrimList[pri]._id ;
+                                }
+                                usedIDs.push(pilgrimList[pri]._id);
+                            }
+                        }
+                    }
+                    $scope.tableParams.data.push(valueOfRoom);
+                }
+
+            });
+            });
+        };
+
+        var compareIt = function(arrayD,valueD) {
+            for (var z = 0; z < arrayD.length; z++) {
+                if (arrayD[z] ===  valueD) {
+                    return z;
+                }
+            }
+            return -1;
+        }
 
 
 

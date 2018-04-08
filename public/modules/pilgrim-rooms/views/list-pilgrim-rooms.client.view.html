@@ -45,8 +45,10 @@
             <tr>
                 <a type="button" class="btn btn-success " title='Export' ng-csv="cvsMe(tableParams.data)"  filename="pilgrim-rooms.csv">
                     <span class="glyphicon glyphicon-export"></span>Export to CSV</a>
-                <a type="button" class="btn btn-danger " title='Export' ng-click="pushRoomNumberToMainTables(tableParams.data)"  >
-                    <span class="glyphicon glyphicon-bullhorn"></span>Push Room Number To Main Tables</a>
+                <!--<a type="button" class="btn btn-danger " title='Export' ng-click="pushRoomNumberToMainTables(tableParams.data)"  >-->
+                    <!--<span class="glyphicon glyphicon-bullhorn"></span>Push Room Number To Main Tables</a>-->
+                <a type="button" class="btn btn-danger " title='Export' ng-click="pullDataFromMains(tableParams.data)"  >
+                    <span class="glyphicon glyphicon-bullhorn"></span>Pull Room Number From Main Tables</a>
             </tr>
         </table>
     </div>

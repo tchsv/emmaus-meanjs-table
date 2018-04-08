@@ -13,13 +13,13 @@ angular.module('pilgrim-rooms')
                     console.log(answer);
                     for (var i = 0; i < answer.total; i++) {
                         var value = [];
-                        if ( (answer.results[i].Committee == 'Table Leader' ) || (answer.results[i].Committee == 'Asst. Table Leader') ) {
+                        if ( answer.results[i].Building == 'Main-Lodge-East-Wing'  ) {
                             value['name'] = answer.results[i].Name;
                             value['value'] = answer.results[i]._id;
                             returnList.push(value);
                         }
                     }
-                console.log(returnList);
+                console.log('getTeam:' + returnList);
             });
 			return returnList;
 		};
@@ -32,10 +32,10 @@ angular.module('pilgrim-rooms')
                 console.log(answer);
                 for (var i = 0; i < answer.total; i++) {
                     var value = [];
-                    if ( (answer.results[i].Committee == 'Table Leader' ) || (answer.results[i].Committee == 'Asst. Table Leader') ) {
+                    if ( answer.results[i].Building == 'Main-Lodge-East-Wing'  ) {
                         value['name'] = answer.results[i].Name;
                         value['value'] = answer.results[i]._id;
-                        returnList.push(value);
+                        returnList.push(answer.results[i]);
                     }
                 }
                 deferred.resolve(returnList);
@@ -76,7 +76,7 @@ angular.module('pilgrim-rooms')
                     var value = [];
                     value['name'] = answer.results[i].FirstName + ' ' + answer.results[i].LastName;
                     value['value'] = answer.results[i]._id;
-                    returnList.push(value);
+                    returnList.push(answer.results[i]);
                 }
                 deferred.resolve(returnList);
             });

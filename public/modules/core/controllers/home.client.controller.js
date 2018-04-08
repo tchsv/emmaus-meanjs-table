@@ -48,6 +48,10 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
                             }
                             if (update) {
                                 console.log("updated row:" + JSON.stringify(currentRow));
+                                currentRow.Building = 'Main-Lodge-East-Wing'
+                                if (!currentRow.City_State_Zip) {
+                                    currentRow.City_State_Zip = currentRow.City + ' ' + currentRow.State + ' ' + currentRow.Zip;
+                                }
                                 if (!currentRow.Room_Mate1) {
                                     currentRow.Room_Mate1 = null;
                                 }

@@ -44,7 +44,7 @@
                             label: 'Team Roommate:',
                             disabled: disabled,
                             options: PilgrimRoomTablesMembers.getTeam()
-                        },
+                        }
                     },
                     {
                         key: 'PilgrimRoommate1',
@@ -53,7 +53,7 @@
                             label: 'Pilgrim Roommate 1:',
                             disabled: disabled,
                             options: PilgrimRoomTablesMembers.getPilgrim()
-                        },
+                        }
                     },
                     {
                         key: 'PilgrimRoommate2',
@@ -62,7 +62,7 @@
                             label: 'Pilgrim Roommate 2:',
                             disabled: disabled,
                             options: PilgrimRoomTablesMembers.getPilgrim()
-                        },
+                        }
                     },
                     {
                         key: 'PilgrimRoommate3',
@@ -71,7 +71,7 @@
                             label: 'Pilgrim Roommate 3:',
                             disabled: disabled,
                             options: PilgrimRoomTablesMembers.getPilgrim()
-                        },
+                        }
                     },
                     {
                         key: 'RoomNumber',
@@ -79,7 +79,7 @@
                         templateOptions: {
                             label: 'Room Number:',
                             disabled: disabled
-                        },
+                        }
                     },
                     {
                         key: 'UpDown',
@@ -87,7 +87,7 @@
                         templateOptions: {
                             label: 'Up Down:',
                             disabled: disabled
-                        },
+                        }
                     },
                     {
                         key: 'Building',
@@ -95,8 +95,8 @@
                         templateOptions: {
                             label: 'Building:',
                             disabled: disabled
-                        },
-                    },
+                        }
+                    }
 
                 ];
 
