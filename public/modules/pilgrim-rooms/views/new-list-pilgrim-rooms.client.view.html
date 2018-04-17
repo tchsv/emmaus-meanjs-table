@@ -1,0 +1,134 @@
+<section data-ng-controller="NewPilgrimRoomsController">
+    <div class="page-header">
+        <h1>Pilgrim rooms</h1>
+    </div>
+
+    <div class="pull-right">
+      <a type="button" class="btn btn-success" href="/#!/pilgrim-rooms/create">
+        <i class="glyphicon glyphicon-open"></i> New PilgrimRoom
+      </a>
+    </div>
+
+    <div>
+        <table ng-table="tableParams"  class="table table-striped table-bordered editable-table table-condensed ng-table-responsive" show-filter="true">
+            <tr ng-repeat="pilgrimRoom in $data">
+                <!--//TeamRoommate: {-->
+                <!--//PilgrimRoommate1: {-->
+                <!--//PilgrimRoommate2: {-->
+                <!--//RoomNumber: {-->
+                <!--//UpDown: {-->
+                <!--//Building: {-->
+
+                <td data-title="'Building'" sortable="'Building'" filter="{ 'Building': 'text' }">
+                    {{pilgrimRoom.Building}}
+                </td>
+                <td data-title="'RoomNumber'" sortable="'RoomNumber'" filter="{ 'RoomNumber': 'text' }">
+                    <div ng-if="!pilgrimRoom.isEditing">{{pilgrimRoom.RoomNumber}}</div>
+                    <div ng-if="pilgrimRoom.isEditing" class="editable-text">
+                        <select ng-model="pilgrimRoom.RoomNumber">
+                            <option value="64">64u</option>
+                            <option value="65">65u</option>
+                            <option value="66">66u</option>
+                            <option value="67">67u</option>
+                            <option value="68">68u</option>
+                            <option value="69">69u</option>
+                            <option value="70">70u</option>
+                            <option value="71">71u</option>
+                            <option value="72">72u</option>
+                            <option value="73">73u no</option>
+                            <option value="74">74u no</option>
+                            <option value="75">75d</option>
+                            <option value="76">76d</option>
+                            <option value="77">77d</option>
+                            <option value="78">78d</option>
+                            <option value="79">79d</option>
+                            <option value="80">80d</option>
+                            <option value="81">81d</option>
+                            <option value="82">82d</option>
+                            <option value="83">83d</option>
+                            <option value="84">84d no</option>
+                            <option value="85">85d no</option>
+                        </select>
+                    </div>
+                </td>
+                <td data-title="'UpDown'" sortable="'UpDown'" filter="{ 'UpDown': 'text' }">{{pilgrimRoom.UpDown}}</td>
+                <td data-title="'TeamRoommate'" sortable="'TeamRoommate'" filter="{ 'TeamRoommate': 'text' }">
+                    <div ng-if="!pilgrimRoom.isEditing"  >
+                        <pilgrim-room-team-member-name memberid="{{pilgrimRoom.TeamRoommate}}"/>
+                    </div>
+                    <div ng-if="pilgrimRoom.isEditing" class="editable-text" >
+                        <select ng-model="pilgrimRoom.TeamRoomate" ng-options="teamPerson.key as teamPerson.value for teamPerson in teamPeople">
+                        </select>
+                        <pilgrim-room-team-member-name memberid="{{pilgrimRoom.TeamRoommate}}"/>
+                    </div>
+
+                </td>
+                <td data-title="'PilgrimRoommate1'" sortable="'PilgrimRoommate1'" filter="{ 'PilgrimRoommate1': 'text' }">
+                    <div ng-if="!pilgrimRoom.isEditing"  >
+                    <pilgrim-room-pilgrim-member-name ng-if="!pilgrimRoom.isEditing" memberid="{{pilgrimRoom.PilgrimRoommate1}}"/>
+                    </div>
+                    <div ng-if="pilgrimRoom.isEditing" class="editable-text" >
+                        <select ng-model="pilgrimRoom.PilgrimRoommate1" ng-options="teamPerson.key as teamPerson.value for teamPerson in pilgrimPeople">
+                        </select>
+                        <pilgrim-room-pilgrim-member-name  memberid="{{pilgrimRoom.PilgrimRoommate1}}"/>
+                    </div>
+                </td>
+                <td data-title="'PilgrimRoommate2'" sortable="'PilgrimRoommate2'" filter="{ 'PilgrimRoommate2': 'text' }">
+                    <div ng-if="!pilgrimRoom.isEditing"  >
+                    <pilgrim-room-pilgrim-member-name ng-if="!pilgrimRoom.isEditing" memberid="{{pilgrimRoom.PilgrimRoommate2}}"/>
+                    </div>
+                    <div ng-if="pilgrimRoom.isEditing" class="editable-text" >
+                        <select ng-model="pilgrimRoom.PilgrimRoommate2" ng-options="teamPerson.key as teamPerson.value for teamPerson in pilgrimPeople">
+                        </select>
+                        <pilgrim-room-pilgrim-member-name  memberid="{{pilgrimRoom.PilgrimRoommate2}}"/>
+                    </div>
+                </td>
+                <td data-title="'PilgrimRoommate3'" sortable="'PilgrimRoommate3'" filter="{ 'PilgrimRoommate3': 'text' }">
+                    <div ng-if="!pilgrimRoom.isEditing"  >
+                    <pilgrim-room-pilgrim-member-name ng-if="!pilgrimRoom.isEditing" memberid="{{pilgrimRoom.PilgrimRoommate3}}"/>
+                    </div>
+                    <div ng-if="pilgrimRoom.isEditing" class="editable-text" >
+                        <select ng-model="pilgrimRoom.PilgrimRoommate3" ng-options="teamPerson.key as teamPerson.value for teamPerson in pilgrimPeople">
+                        </select>
+                        <pilgrim-room-pilgrim-member-name memberid="{{pilgrimRoom.PilgrimRoommate3}}"/>
+                    </div>
+                </td>
+                <td>
+                    <button class="btn btn-default btn-sm" ng-click="pilgrimRoom.isEditing = true" ng-if="!pilgrimRoom.isEditing">
+                        <span class="glyphicon glyphicon-pencil">
+                        </span>
+                    </button>
+                    <button class="btn btn-default btn-sm" ng-click="updateAndReload(pilgrimRoom)" ng-if="pilgrimRoom.isEditing">
+                        <span class="glyphicon glyphicon-ok">
+                        </span>
+                    </button>
+                    <button class="btn btn-default btn-sm" ng-click="pilgrimRoom.isEditing = false" ng-if="pilgrimRoom.isEditing">
+                        <span class="glyphicon glyphicon-remove">
+                        </span>
+                    </button>
+                </td>
+                <td>
+                   <div class="table-actions">
+                        <a class="btn btn-default" title="View" href="/#!/pilgrim-rooms/{{pilgrimRoom._id}}">
+                            <span class="glyphicon glyphicon-eye-open"></span>
+                        </a>
+                        <a class="btn btn-default" title="Edit" href="/#!/pilgrim-rooms/{{pilgrimRoom._id}}/edit">
+                            <span class="glyphicon glyphicon-edit"></span>
+                        </a>
+                        <a class="btn btn-danger" title="Remove" ng-really-message="Are you sure ?" ng-really-click="remove(pilgrimRoom)" item="pilgrimRoom">
+                  				<span class="glyphicon glyphicon-remove-circle"></span>
+                  			</a>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <a type="button" class="btn btn-success " title='Export' ng-csv="cvsMe(tableParams.data)"  filename="pilgrim-rooms.csv">
+                    <span class="glyphicon glyphicon-export"></span>Export to CSV</a>
+                <!--<a type="button" class="btn btn-danger " title='Export' ng-click="pushRoomNumberToMainTables(tableParams.data)"  >-->
+                    <!--<span class="glyphicon glyphicon-bullhorn"></span>Push Room Number To Main Tables</a>-->
+                <a type="button" class="btn btn-danger " title='Export' ng-click="pullDataFromMains(tableParams.data)"  >
+                    <span class="glyphicon glyphicon-bullhorn"></span>Pull Room Number From Main Tables</a>
+            </tr>
+        </table>
+    </div>
+</section>

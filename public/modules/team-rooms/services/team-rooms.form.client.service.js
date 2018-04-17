@@ -86,6 +86,23 @@
                             {'name':'314','value':'314'},
                             {'name':'NurseRoom','value':'NurseRoom'},
                             {'name':'HillCrest1','value':'HillCrest1'},
+                            // 49 - 63 Southhall
+                            {'name':'49ng','value':'49'},
+                            {'name':'50','value':'50'},
+                            {'name':'51','value':'51'},
+                            {'name':'52','value':'52'},
+                            {'name':'53','value':'53'},
+                            {'name':'54','value':'54'},
+                            {'name':'55','value':'55'},
+                            {'name':'56','value':'56'},
+                            {'name':'57','value':'57'},
+                            {'name':'58','value':'58'},
+                            {'name':'59','value':'59'},
+                            {'name':'60','value':'60'},
+                            {'name':'61','value':'61'},
+                            {'name':'62','value':'62'},
+                            {'name':'63','value':'63'}
+
                         ]
                     }
                 },

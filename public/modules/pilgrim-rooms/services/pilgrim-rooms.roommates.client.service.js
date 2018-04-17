@@ -42,6 +42,18 @@ angular.module('pilgrim-rooms')
             });
             return deferred.promise;
         };
+        var getTeamsWp =  function() {
+            var deferred = $q.defer();
+            var returnList = [];
+            var nowWholeList = $resource('/whole-team-lists?count=999&page=1');
+            var answer = nowWholeList.get(function() {
+                console.log(answer);
+                deferred.resolve(answer);
+            });
+            return deferred.promise;
+        };
+
+
 		var getPilgrim =    function() {
             var returnList = [];
             var nowWholeList = $resource('/pilgrims?count=999&page=1');
@@ -82,12 +94,28 @@ angular.module('pilgrim-rooms')
             });
             return deferred.promise;
         };
+        var getPilgrimsWp =    function() {
+            var deferred = $q.defer();
+            var returnList = [];
+            var nowWholeList = $resource('/pilgrims?count=999&page=1');
+            var noneValue = [];
+            noneValue['name'] = 'Empty';
+            noneValue['value'] = 'Empty';
+            returnList.push(noneValue);
+            var answer = nowWholeList.get(function() {
+                console.log(answer);
+                deferred.resolve(answer);
+            });
+            return deferred.promise;
+        };
 
         return {
             getTeam: getTeam,
             getPilgrim: getPilgrim,
             getTeamWp: getTeamWp,
-            getPilgrimWp: getPilgrimWp
+            getPilgrimWp: getPilgrimWp,
+            getTeamsWp: getTeamsWp,
+            getPilgrimsWp: getPilgrimsWp
         }
 
 

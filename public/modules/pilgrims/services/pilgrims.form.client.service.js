@@ -97,10 +97,17 @@
                 },
                 {
                     key: 'Table',
-                    type: 'input',
+                    type: 'select',
                     templateOptions: {
                         label: 'Table:',
-                        disabled: disabled
+                        disabled: disabled,
+                        options: [{name: "Esther", value: "Esther"},
+                            {name: "Anna", value: "Anna"},
+                            {name: "Mary", value: "Mary"},
+                            {name: "Tabitha", value: "Tabitha"},
+                            {name: "Martha", value: "Martha"},
+                            {name: "Naomi", value: "Naomi"},
+                            {name: "Ruth", value: "Ruth"}]
                     }
                 },
                 {

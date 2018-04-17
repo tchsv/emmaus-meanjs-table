@@ -80,7 +80,23 @@ angular.module('team-rooms').controller('TeamRoomsController', ['$scope', '$stat
 			}
 
 		};
+		$scope.updateAndReload = function (teamRoom) {
+			console.log(teamRoom);
+			if (teamRoom.Roommate1) {
+				pushTableToTeamsTable(teamRoom.Roommate1,teamRoom.RoomNumber);
+			}
+			if (teamRoom.Roommate2) {
+				pushTableToTeamsTable(teamRoom.Roommate2,teamRoom.RoomNumber)
+			}
+			if (teamRoom.Roommates) {
+			for (var zzz = 0 ; zzz < teamRoom.Roommates.length; zzz++ ) {
+				pushTableToTeamsTable(teamRoom.Roommates[zzz],teamRoom.RoomNumber);
+			}
+            }
+			$scope.tableParams.data.length = 0;
+			$scope.pullDataFromMains();
 
+		};
         function isTeamBuilding  (buildingName) {
             if (buildingName === 'Retreat Center'){
                 return true;

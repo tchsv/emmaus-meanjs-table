@@ -18,6 +18,13 @@
  * Room_Mate1    Room_Mate2    Paid    Amount_Paid    Amount_Due    CheckNumber    RoomNumber    HomeCluster
  */
 -->
+                <td>
+                    <div class="table-actions">
+                        <a class="btn btn-default" title="Edit" href="/#!/pilgrims/{{pilgrim._id}}/edit">
+                            <span class="glyphicon glyphicon-edit"></span>
+                        </a>
+                    </div>
+                </td>
                 <td data-title="'FirstName'" sortable="'FirstName'" filter="{ 'FirstName': 'text' }">{{pilgrim.FirstName}}</td>
                 <td data-title="'LastName'" sortable="'LastName'" filter="{ 'LastName': 'text' }">{{pilgrim.LastName}}</td>
                 <td data-title="'Street_Address'" sortable="'Street_Address'" filter="{ 'Street_Address': 'text' }">{{pilgrim.Street_Address}}</td>
@@ -39,14 +46,9 @@
                 <td data-title="'RoomNumber'" sortable="'RoomNumber'" filter="{ 'RoomNumber': 'text' }">{{pilgrim.RoomNumber}}</td>
                 <td data-title="'HomeCluster'" sortable="'HomeCluster'" filter="{ 'HomeCluster': 'text' }">{{pilgrim.HomeCluster}}</td>
                 <td>
-                    <div class="table-actions">
-                <td>
                    <div class="table-actions">
                         <a class="btn btn-default" title="View" href="/#!/pilgrims/{{pilgrim._id}}">
                             <span class="glyphicon glyphicon-eye-open"></span>
-                        </a>
-                        <a class="btn btn-default" title="Edit" href="/#!/pilgrims/{{pilgrim._id}}/edit">
-                            <span class="glyphicon glyphicon-edit"></span>
                         </a>
                         <a class="btn btn-danger" title="Remove" ng-really-message="Are you sure ?" ng-really-click="remove(pilgrim)" item="pilgrim">
                   				<span class="glyphicon glyphicon-remove-circle"></span>
