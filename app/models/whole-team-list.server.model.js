@@ -102,6 +102,11 @@ var WholeTeamListSchema = new Schema({
 		default: '0',
 		trim: true
 	},
+	PaidCash: {
+		type: Number,
+		default: '0',
+		trim: true
+	},
 	CheckNumber: {
 		type: Number,
 		default: '0',

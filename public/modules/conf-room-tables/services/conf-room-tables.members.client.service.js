@@ -72,7 +72,7 @@ angular.module('conf-room-tables')
                     console.log('getTableLeadersWp'+answer);
                     for (var i = 0; i < answer.total; i++) {
                         var value = [];
-                        if (answer.results[i].Committee == 'Table Leader') {
+                        if (answer.results[i].Committee == 'Table Leader' || answer.results[i].Committee == 'Table Leaders') {
                             // value['name'] = answer.results[i].Name;
                             // value['AreaCode'] = answer.results[i].AreaCode;
                             // value['Street_Address'] = answer.results[i].Street_Address;
@@ -100,7 +100,7 @@ angular.module('conf-room-tables')
                     console.log('getAssistantTableLeadersWp'+answer);
                     for (var i = 0; i < answer.total; i++) {
                         var value = [];
-                        if (answer.results[i].Committee == 'Asst. Table Leader') {
+                        if (answer.results[i].Committee == 'Asst. Table Leader' || answer.results[i].Committee == 'ATL') {
                             // value['name'] = answer.results[i].Name;
                             // value['AreaCode'] = answer.results[i].AreaCode;
                             // value['Street_Address'] = answer.results[i].Street_Address;

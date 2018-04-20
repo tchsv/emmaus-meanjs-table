@@ -306,7 +306,10 @@ angular.module('whole-team-lists')
                 return 0;
             }
             for (var i = 0; i < stuff.length; i++) {
-                if ( stuff[i].CheckNumber == 0) {
+                if ( stuff[i].PaidCash) {
+                    sumValue += stuff[i].PaidCash
+                }
+                else if ( stuff[i].CheckNumber == 0) {
                     sumValue += stuff[i].PaidAmount;
                 }
             }
@@ -326,11 +329,21 @@ angular.module('whole-team-lists')
         };
         $scope.totalGrand= function(stuff) {
             var sumValue =0;
+
             if (stuff.length == 0 ){
                 return 0;
             }
+
             for (var i = 0; i < stuff.length; i++) {
+
+            }
+
+            for (var i = 0; i < stuff.length; i++) {
+                if (stuff[i].PaidAmount)
                     sumValue += stuff[i].PaidAmount;
+                if (stuff[i].PaidCash)
+                    sumValue += stuff[i].PaidCash;
+                // console.log('i:' + i + ' total:' + sumValue + ' thisone:' + stuff[i].PaidAmount);
             }
             return sumValue;
         };

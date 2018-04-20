@@ -58,7 +58,15 @@
                     key: 'PaidAmount',
                     type: 'input',
                     templateOptions: {
-                        label: 'Paid Amount:',
+                        label: 'Paid Check:',
+                        disabled: disabled
+                    }
+                },
+                {
+                    key: 'PaidCash',
+                    type: 'input',
+                    templateOptions: {
+                        label: 'Paid Cash:',
                         disabled: disabled
                     }
                 },

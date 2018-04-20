@@ -250,7 +250,7 @@ angular.module('pilgrim-rooms').controller('NewPilgrimRoomsController', ['$scope
                 }
             }
             return -1;
-        }
+        };
 
 
         $scope.updateAndReload = function(theRow) {
