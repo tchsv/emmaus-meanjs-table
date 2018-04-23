@@ -335,7 +335,18 @@ angular.module('whole-team-lists')
             }
 
             for (var i = 0; i < stuff.length; i++) {
+                var current = stuff[i];
+                if (!current.CheckNumber) {
 
+                 if ( current.CheckNumber === '0') {
+                    console.log('was cash')
+                } else {
+
+                 }
+
+                } else {
+                    console.log('was also cash');
+                }
             }
 
             for (var i = 0; i < stuff.length; i++) {
