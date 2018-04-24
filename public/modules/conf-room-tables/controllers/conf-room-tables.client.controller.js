@@ -62,6 +62,20 @@ angular.module('conf-room-tables').controller('ConfRoomTablesController',
             return deferred.promise;
 
         };
+        $scope.checkTable = function(thisRow) {
+            // var deferred = $q.defer();
+            // var team = ConfRoomTablesMembers.getTeamMembersWp();
+            // var pilgirms = ConfRoomTablesMembers.getPilgrimsWp();
+            // team.then(function(ta){
+            //     pilgirms.then(function(pa) {
+            //         console.log(ta + pa);
+            //         deferred.resolve(false);
+            //
+            //     });
+            // });
+            // return deferred.promise;
+            return false;
+        };
         $scope.pullDataFromMains =  function(tableData) {
             ConfRoomTablesMembers.getTableLeadersWp().then(function (tableLeaderList) {
                 ConfRoomTablesMembers.getAssistantTableLeadersWp().then(function (assistantTableLeaderList) {
@@ -105,6 +119,12 @@ angular.module('conf-room-tables').controller('ConfRoomTablesController',
                             } else {
                                 valueOfRoom['TableLeader'] = teamTLList[tri]._id;
                                 valueOfRoom['AssistantTableLeader'] = null;
+                                for ( var atl = 0 ; atl < teamATLList.length; atl++) {
+                                    if (teamATLList[atl].Table === teamTLList[tri].Table ) {
+                                        valueOfRoom['AssistantTableLeader'] = teamATLList[atl]._id;
+                                        usedIDs.push(teamATLList[atl]._id);
+                                    }
+                                }
                                 valueOfRoom['Pilgrim1'] = null;
                                 valueOfRoom['Pilgrim2'] = null;
                                 valueOfRoom['Pilgrim3'] = null;
@@ -141,45 +161,53 @@ angular.module('conf-room-tables').controller('ConfRoomTablesController',
                             $scope.tableParams.data.push(valueOfRoom);
                         // }
                     }
-                    for (var tri = 0 ; tri < pilgrimList.length; tri++){
+                    for (var pri = 0 ; pri < pilgrimList.length; pri++){
                         var valueOfRoom = [];
-                        if (!usedIDs.includes(pilgrimList[tri]._id) && pilgrimList[tri].RoomNumber === '') {
-                            valueOfRoom['PilgrimRoommate1'] = pilgrimList[tri]._id;
-                            valueOfRoom['TeamRoommate'] = null;
-                            valueOfRoom['PilgrimRoommate2'] = null;
-                            valueOfRoom['PilgrimRoommate3'] = null;
-                            valueOfRoom['RoomNumber'] = '';
-                            valueOfRoom['UpDown'] = '';
-                            valueOfRoom['Building'] = pilgrimList[tri].Building;
-                            var person = {};
-                            person.value = pilgrimList[tri].FirstName
-                                + ' ' + pilgrimList[tri].LastName
-                                + '(' + pilgrimList[tri].Table
-                                + ',' + pilgrimList[tri].Age
-                                + ',' + pilgrimList[tri].Special
-                                + ')';
-                            person.key = pilgrimList[tri]._id;
-                            $scope.pilgrimPeople.push(person);
-                            usedIDs.push(pilgrimList[tri]._id);
+                        if (!usedIDs.includes(pilgrimList[pri]._id) && pilgrimList[pri].Table === '') {
+                            valueOfRoom['TableLeader'] = null;
+                            valueOfRoom['AssistantTableLeader'] = null;
+                            valueOfRoom['Pilgrim1'] = pilgrimList[pri]._id;
+                            valueOfRoom['Pilgrim2'] = null;
+                            valueOfRoom['Pilgrim3'] = null;
+                            valueOfRoom['Pilgrim4'] = null;
+                            valueOfRoom['Pilgrim5'] = null;
+                            valueOfRoom['Pilgrim6'] = null;
+                            valueOfRoom['Pilgrim7'] = null;
+                            valueOfRoom['Pilgrim8'] = null;
+                            valueOfRoom['Table'] = '';
+                            usedIDs.push(pilgrimList[pri]._id);
 
                             $scope.tableParams.data.push(valueOfRoom);
-                        } else if (!usedIDs.includes(pilgrimList[tri]._id)){
-                            valueOfRoom['PilgrimRoommate1'] = pilgrimList[tri]._id;
-                            valueOfRoom['TeamRoommate'] = null;
-                            valueOfRoom['PilgrimRoommate2'] = null;
-                            valueOfRoom['PilgrimRoommate3'] = null;
-                            valueOfRoom['RoomNumber'] = pilgrimList[tri].RoomNumber;
-                            valueOfRoom['UpDown'] = translateUpDown(pilgrimList[tri].RoomNumber);
-                            valueOfRoom['Building'] = pilgrimList[tri].Building;
-
-                            for (var pri = 0; pri < pilgrimList.length; pri++) {
-                                if (!usedIDs.includes(pilgrimList[pri]._id) && pilgrimList[pri].RoomNumber == pilgrimList[tri].RoomNumber) {
-                                    if (!valueOfRoom['PilgrimRoommate1']) {
-                                        valueOfRoom['PilgrimRoommate1'] = pilgrimList[pri]._id;
-                                    } else if (!valueOfRoom['PilgrimRoommate2']) {
-                                        valueOfRoom['PilgrimRoommate2'] = pilgrimList[pri]._id ;
-                                    } else if (!valueOfRoom['PilgrimRoommate3']) {
-                                        valueOfRoom['PilgrimRoommate3'] = pilgrimList[pri]._id ;
+                        } else if (!usedIDs.includes(pilgrimList[pri]._id)){
+                            valueOfRoom['TableLeader'] = null;
+                            valueOfRoom['AssistantTableLeader'] = null;
+                            valueOfRoom['Pilgrim1'] = pilgrimList[pri]._id;
+                            valueOfRoom['Pilgrim2'] = null;
+                            valueOfRoom['Pilgrim3'] = null;
+                            valueOfRoom['Pilgrim4'] = null;
+                            valueOfRoom['Pilgrim5'] = null;
+                            valueOfRoom['Pilgrim6'] = null;
+                            valueOfRoom['Pilgrim7'] = null;
+                            valueOfRoom['Pilgrim8'] = null;
+                            valueOfRoom['Table'] = pilgrimList[tri].Table;
+                            for (var pl = 0; pl < pilgrimList.length; pl++) {
+                                if (!usedIDs.includes(pilgrimList[pl]._id) && pilgrimList[pri].Table == pilgrimList[pl].Table) {
+                                    if (!valueOfRoom['Pilgrim1']) {
+                                        valueOfRoom['Pilgrim1'] = pilgrimList[pri]._id;
+                                    } else if (!valueOfRoom['Pilgrim2']) {
+                                        valueOfRoom['Pilgrim2'] = pilgrimList[pri]._id;
+                                    } else if (!valueOfRoom['Pilgrim3']) {
+                                        valueOfRoom['Pilgrim3'] = pilgrimList[pri]._id;
+                                    } else if (!valueOfRoom['Pilgrim4']) {
+                                        valueOfRoom['Pilgrim4'] = pilgrimList[pri]._id;
+                                    } else if (!valueOfRoom['Pilgrim5']) {
+                                        valueOfRoom['Pilgrim5'] = pilgrimList[pri]._id;
+                                    } else if (!valueOfRoom['Pilgrim6']) {
+                                        valueOfRoom['Pilgrim6'] = pilgrimList[pri]._id;
+                                    } else if (!valueOfRoom['Pilgrim7']) {
+                                        valueOfRoom['Pilgrim7'] = pilgrimList[pri]._id;
+                                    } else if (!valueOfRoom['Pilgrim8']) {
+                                        valueOfRoom['Pilgrim8'] = pilgrimList[pri]._id;
                                     }
                                     usedIDs.push(pilgrimList[pri]._id);
                                 }

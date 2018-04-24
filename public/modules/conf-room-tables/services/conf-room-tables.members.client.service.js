@@ -63,7 +63,6 @@ angular.module('conf-room-tables')
                 return returnList;
             };
 
-
             var getTableLeadersWp = function () {
                 var deferred = $q.defer();
                 var returnList = [];
@@ -123,34 +122,27 @@ angular.module('conf-room-tables')
 
             var getPilgrimsWp = function () {
                 var deferred = $q.defer();
-                var returnList = [];
                 var nowWholeList = $resource('/pilgrims?count=999&page=1');
-                var noneValue = [];
-                noneValue['name'] = 'Empty';
-                noneValue['value'] = 'Empty';
-                returnList.push(noneValue);
                 var answer = nowWholeList.get(function () {
                     console.log('getPilgrimsWp'+answer);
-                    for (var i = 0; i < answer.total; i++) {
-                        // var value = [];
-                        // value['name'] = answer.results[i].FirstName + ' ' + answer.results[i].LastName;
-                        // value['AreaCode'] = answer.results[i].AreaCode;
-                        // value['Street_Address'] = answer.results[i].Street_Address;
-                        // value['City'] = answer.results[i].City;
-                        // value['State'] = answer.results[i].State;
-                        // value['Zip'] = answer.results[i].Zip;
-                        // value['Phone'] = answer.results[i].Phone;
-                        // value['Table'] = answer.results[i].Table;
-                        // value['value'] = answer.results[i]._id;
-                        returnList.push(answer.results[i]);
-                    }
-                    console.log('getPilgrimsWp'+returnList);
-                    deferred.resolve(returnList);
+                    deferred.resolve(answer.results);
 
                 });
                 return deferred.promise;
 
             };
+            var getTeamMembersWp = function () {
+                var deferred = $q.defer();
+                var nowWholeList = $resource('/pilgrims?count=999&page=1');
+                var answer = nowWholeList.get(function () {
+                    console.log('getTeamMembersWp'+answer);
+                    deferred.resolve(answer.results);
+
+                });
+                return deferred.promise;
+
+            };
+
 
 
             return {
@@ -159,7 +151,8 @@ angular.module('conf-room-tables')
                 getPilgrims: getPilgrims,
                 getTableLeadersWp: getTableLeadersWp,
                 getAssistantTableLeadersWp: getAssistantTableLeadersWp,
-                getPilgrimsWp: getPilgrimsWp
+                getPilgrimsWp: getPilgrimsWp,
+                getTeamMembersWp: getTeamMembersWp
             }
 
 
